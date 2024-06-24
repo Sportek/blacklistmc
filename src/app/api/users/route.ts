@@ -12,11 +12,14 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { discordId, status } = userSchema.parse(body);
+    const { discordId, status, imageUrl, displayName, username } = userSchema.parse(body);
 
     const user = await prisma.user.create({
       data: {
         discordId,
+        imageUrl,
+        displayName,
+        username,
         status: status as UserStatus,
       },
     });

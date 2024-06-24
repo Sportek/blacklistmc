@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@azure/arm-storage": "^18.2.0",
+    "@azure/storage-blob": "^12.23.0",
+    "@azure/storage-file-share": "^12.23.0",
     "@prisma/client": "^5.15.1",
     "@radix-ui/react-avatar": "^1.1.0",
     "class-variance-authority": "^0.7.0",
