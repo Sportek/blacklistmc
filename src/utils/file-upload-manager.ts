@@ -1,10 +1,8 @@
 import { BlobServiceClient } from "@azure/storage-blob";
 import { NextRequest } from "next/server";
+import path from "path";
 
-export async function uploadFileToAzure(req: NextRequest): Promise<string> {
-  const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
-  const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
-
+export async function uploadFileToAzure(req: NextRequest, filePrefix: string): Promise<string> {
   const contentType = req.headers.get("content-type") || "";
   const boundary = contentType.split("=")[1];
   if (!boundary) {
@@ -38,8 +36,17 @@ export async function uploadFileToAzure(req: NextRequest): Promise<string> {
     throw new Error("File not found");
   }
 
-  const blockBlobClient = containerClient.getBlockBlobClient(fileName);
-  await blockBlobClient.uploadData(fileBuffer);
+  const filePath = path.join(filePrefix, fileName);
+
+  await uploadBufferToAzure(fileBuffer, filePath);
 
   return fileName;
+}
+
+export async function uploadBufferToAzure(buffer: Uint8Array, filePath: string) {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+  const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
+
+  const blockBlobClient = containerClient.getBlockBlobClient(filePath);
+  await blockBlobClient.uploadData(buffer);
 }
