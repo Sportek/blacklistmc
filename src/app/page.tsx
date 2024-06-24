@@ -1,10 +1,10 @@
 import Shield from "@/components/icons/shield";
-import { User, UserStatus } from "@prisma/client";
+import { UserStatus } from "@prisma/client";
 import { AlertCircle, Check } from "lucide-react";
 
 export default async function Home() {
-  const users = await fetch("/api/users");
-  const usersJson = (await users.json()) as User[];
+  // const users = await fetch("/api/users");
+  // const usersJson = (await users.json()) as User[];
 
   function getStatusBadge(status: UserStatus) {
     if (status === UserStatus.BLACKLISTED) {
