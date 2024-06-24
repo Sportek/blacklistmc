@@ -2,13 +2,8 @@ import { SignIn } from "@/components/auth/sign-in";
 import Shield from "@/components/icons/shield";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { UserStatus } from "@/types/types";
 import { AlertCircle, Check, Search } from "lucide-react";
-
-export enum UserStatus {
-  TRUSTED = "TRUSTED",
-  BLACKLISTED = "BLACKLISTED",
-  UNKNOWN = "UNKNOWN",
-}
 
 export default function Home() {
   const temporaryFakes = [
