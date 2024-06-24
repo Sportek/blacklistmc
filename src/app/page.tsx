@@ -1,3 +1,4 @@
+import { SignIn } from "@/components/auth/sign-in";
 import Shield from "@/components/icons/shield";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -58,6 +59,7 @@ export default function Home() {
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
+      <SignIn />
       <div className="flex flex-col gap-4 w-full max-w-3xl justify-center items-center p-4">
         <div className="text-2xl font-semibold w-full text-center">Rechercher une personne</div>
 
