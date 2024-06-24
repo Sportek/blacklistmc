@@ -37,12 +37,6 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
   return Response.json(proofs, { status: 200 });
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
