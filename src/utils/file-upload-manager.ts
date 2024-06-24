@@ -3,10 +3,9 @@ import { NextRequest } from "next/server";
 import path from "path";
 
 export async function uploadFileToAzure(req: NextRequest, filePrefix: string): Promise<string> {
-  const contentType = req.headers.get("content-type") || "";
-  const boundary = contentType.split("=")[1];
-  if (!boundary) {
-    throw new Error("No boundary found");
+  const fileName = req.headers.get("x-filename");
+  if (!fileName) {
+    throw new Error("No filename found in headers (x-filename)");
   }
 
   if (!req.body) {
@@ -14,39 +13,48 @@ export async function uploadFileToAzure(req: NextRequest, filePrefix: string): P
   }
 
   const reader = req.body.getReader();
-  const decoder = new TextDecoder();
-  let fileName = "";
   let fileBuffer = new Uint8Array();
 
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    const chunk = decoder.decode(value, { stream: true });
-    if (chunk.includes("filename=")) {
-      const match = chunk.match(/filename="(.+?)"/);
-      if (match) fileName = match[1];
-    }
     const tempBuffer = new Uint8Array(fileBuffer.length + value.length);
     tempBuffer.set(fileBuffer);
     tempBuffer.set(value, fileBuffer.length);
     fileBuffer = tempBuffer;
   }
 
-  if (!fileName) {
-    throw new Error("File not found");
-  }
-
-  const filePath = path.join(filePrefix, fileName);
+  const timestamp = Date.now();
+  const fileExtension = path.extname(fileName);
+  const baseName = path.basename(fileName, fileExtension);
+  const filePath = path.posix.join(filePrefix, `${baseName}_${timestamp}${fileExtension}`);
 
   await uploadBufferToAzure(fileBuffer, filePath);
 
-  return fileName;
+  return filePath;
 }
 
 export async function uploadBufferToAzure(buffer: Uint8Array, filePath: string) {
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
 
+  console.log("FilePath", filePath);
+
   const blockBlobClient = containerClient.getBlockBlobClient(filePath);
   await blockBlobClient.uploadData(buffer);
+}
+
+export async function retrieveBufferFromAzure(filePath: string) {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+  const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
+
+  const blockBlobClient = containerClient.getBlockBlobClient(filePath);
+
+  const exists = await blockBlobClient.exists();
+  if (!exists) {
+    throw new Error("File not found");
+  }
+
+  const blob = await blockBlobClient.download();
+  return blob.readableStreamBody;
 }

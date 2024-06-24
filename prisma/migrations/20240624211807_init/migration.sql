@@ -5,11 +5,24 @@ CREATE TYPE "UserStatus" AS ENUM ('TRUSTED', 'BLACKLISTED', 'UNKNOWN');
 CREATE TYPE "ProofType" AS ENUM ('VIDEO', 'IMAGE', 'FILE');
 
 -- CreateTable
+CREATE TABLE "Account" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "discordId" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
     "status" "UserStatus" NOT NULL DEFAULT 'UNKNOWN',
+    "imageUrl" TEXT NOT NULL,
+    "displayName" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -41,7 +54,16 @@ CREATE TABLE "Proof" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Account_email_key" ON "Account"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Account_userId_key" ON "Account"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_discordId_key" ON "User"("discordId");
+
+-- AddForeignKey
+ALTER TABLE "Account" ADD CONSTRAINT "Account_user_relation" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "Blacklist" ADD CONSTRAINT "Blacklist_user_relation" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;

@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { uploadFileToAzure } from "@/utils/file-upload-manager";
+import { ProofType } from "@prisma/client";
 import { NextRequest } from "next/server";
 import path from "path";
 
@@ -10,35 +11,62 @@ interface UsersUserIdBlacklistsBlacklistIdProofsParams {
   };
 }
 
+const getProofType = (fileName: string): ProofType => {
+  const extension = path.extname(fileName);
+  if (extension === ".png" || extension === ".jpg" || extension === ".jpeg") {
+    return "IMAGE";
+  }
+  if (extension === ".mp4" || extension === ".mov") {
+    return "VIDEO";
+  }
+  return "FILE";
+};
+
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    return Response.json({ error: "User not found" }, { status: 404 });
   }
 
   const blacklist = await prisma.blacklist.findUnique({ where: { id: params.blacklistId } });
   if (!blacklist) {
-    return new Response("Blacklist not found", { status: 404 });
+    return Response.json({ error: "Blacklist not found" }, { status: 404 });
   }
 
   const proofs = await prisma.proof.findMany({ where: { blacklistId: params.blacklistId } });
-  return new Response(JSON.stringify(proofs), { status: 200 });
+  return Response.json(proofs, { status: 200 });
 }
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    return Response.json({ error: "User not found" }, { status: 404 });
   }
   const blacklist = await prisma.blacklist.findUnique({ where: { id: params.blacklistId } });
   if (!blacklist) {
-    return new Response("Blacklist not found", { status: 404 });
+    return Response.json({ error: "Blacklist not found" }, { status: 404 });
   }
 
   try {
-    const fileName = await uploadFileToAzure(req, path.join(params.userId, params.blacklistId, "proofs"));
-    return new Response(`File ${fileName} uploaded successfully`, { status: 200 });
+    const fileName = await uploadFileToAzure(
+      req,
+      path.posix.join("users", params.userId, "blacklists", params.blacklistId, "proofs")
+    );
+    const proof = await prisma.proof.create({
+      data: {
+        url: fileName,
+        blacklistId: params.blacklistId,
+        type: getProofType(fileName),
+      },
+    });
+    return Response.json(proof, { status: 200 });
   } catch (error: any) {
-    return new Response(error.message, { status: 400 });
+    return Response.json({ error: error.message }, { status: 400 });
   }
 }

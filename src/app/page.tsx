@@ -2,30 +2,12 @@ import { SignIn } from "@/components/auth/sign-in";
 import Shield from "@/components/icons/shield";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { UserStatus } from "@prisma/client";
+import { User, UserStatus } from "@prisma/client";
 import { AlertCircle, Check, Search } from "lucide-react";
 
-export default function Home() {
-  const temporaryFakes = [
-    {
-      name: "John Doe",
-      username: "john.doe",
-      status: UserStatus.BLACKLISTED,
-      imageUrl: "https://picsum.photos/200/200",
-    },
-    {
-      name: "Jonathan Doe",
-      username: "jonathan.doe",
-      status: UserStatus.TRUSTED,
-      imageUrl: "https://picsum.photos/200/200",
-    },
-    {
-      name: "Jordan",
-      username: "jordan",
-      status: UserStatus.UNKNOWN,
-      imageUrl: "https://picsum.photos/200/200",
-    },
-  ];
+export default async function Home() {
+  const users = await fetch("/api/users");
+  const usersJson = (await users.json()) as User[];
 
   function getStatusBadge(status: UserStatus) {
     if (status === UserStatus.BLACKLISTED) {
@@ -69,11 +51,11 @@ export default function Home() {
         <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full">
           <div className="text-lg font-semibold">Résultats</div>
           <div className="flex flex-col gap-4">
-            {temporaryFakes.map((fake, index) => (
+            {usersJson.map((user) => (
               <div className="bg-white bg-opacity-20 rounded-lg p-2" key={fake.username}>
                 <div className="flex items-center gap-2">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={fake.imageUrl} alt={fake.username} />
+                    <AvatarImage src={user.imageUrl} alt={user.discordId} />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col gap-1">

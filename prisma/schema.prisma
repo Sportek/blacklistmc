@@ -42,6 +42,10 @@ model User {
   discordId String     @unique
   status    UserStatus @default(UNKNOWN)
   account   Account?
+  imageUrl  String
+
+  displayName String
+  username    String
 
   createdAt DateTime @default(now()) @db.Timestamp(3)
   updatedAt DateTime @updatedAt @db.Timestamp(3)
