@@ -1,9 +1,9 @@
+import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 
-const gabarito = Gabarito({ subsets: ["latin"] });
+const gabarito = Gabarito({ subsets: ["latin"], preload: true, display: "swap" });
 
 export const metadata: Metadata = {
   title: {
@@ -21,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={cn("bg-background font-sans antialiased text-white", gabarito.className)}>
-        {children}
-      </body>
+      <body className={cn("bg-background antialiased text-white", gabarito.className)}>{children}</body>
     </html>
   );
 }

@@ -1,12 +1,20 @@
+"use client";
+import Header from "@/components/header";
 import Shield from "@/components/icons/shield";
-import { UserStatus } from "@prisma/client";
-import { AlertCircle, Check } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import useDebounce from "@/hooks/useDebounce";
+import { User, UserStatus } from "@prisma/client";
+import { AlertCircle, Check, Search } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
-export default async function Home() {
-  // const users = await fetch("/api/users");
-  // const usersJson = (await users.json()) as User[];
+export default function Home() {
+  const [search, setSearch] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const debouncedSearch = useDebounce(search, 750);
 
-  function getStatusBadge(status: UserStatus) {
+  const getStatusBadge = useCallback((status: UserStatus) => {
     if (status === UserStatus.BLACKLISTED) {
       return (
         <div className="bg-red-500 rounded-md gap-2 flex flex-row items-center px-2 w-fit h-fit">
@@ -29,46 +37,64 @@ export default async function Home() {
         </div>
       );
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      const users = await fetch(`/api/research?query=${debouncedSearch}`);
+      setUsers(await users.json());
+      setIsLoading(false);
+    };
+    if (debouncedSearch) {
+      fetchUsers();
+    }
+  }, [debouncedSearch]);
 
   return (
-    <div>Hello</div>
-    // <div className="w-full h-screen flex justify-center items-center">
-    //   <SignIn />
-    //   <div className="flex flex-col gap-4 w-full max-w-3xl justify-center items-center p-4">
-    //     <div className="text-2xl font-semibold w-full text-center">Rechercher une personne</div>
+    <div className="relative w-full h-screen flex flex-col overflow-hidden">
+      <Header />
+      {/* <SignIn /> */}
+      {/* <MultipleOrbit /> */}
 
-    //     <div className="flex items-center gap-4 px-4 py-3 bg-white bg-opacity-20 rounded-lg border border-white border-opacity-20 w-full">
-    //       <Search size={24} />
-    //       <Input
-    //         placeholder="Identifiant, pseudonyme, displayname, ..."
-    //         className="h-full placeholder:text-white/70 bg-transparent border-none text-white w-full"
-    //       ></Input>
-    //     </div>
+      <div className="flex flex-col gap-4 max-w-3xl justify-center items-center p-4 z-10 mx-auto">
+        <div className="text-6xl font-extrabold w-full text-center">Rechercher un blacklist</div>
 
-    //     <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full">
-    //       <div className="text-lg font-semibold">Résultats</div>
-    //       <div className="flex flex-col gap-4">
-    //         {usersJson.map((user) => (
-    //           <div className="bg-white bg-opacity-20 rounded-lg p-2" key={fake.username}>
-    //             <div className="flex items-center gap-2">
-    //               <Avatar className="w-12 h-12">
-    //                 <AvatarImage src={user.imageUrl} alt={user.discordId} />
-    //                 <AvatarFallback>CN</AvatarFallback>
-    //               </Avatar>
-    //               <div className="flex flex-col gap-1">
-    //                 <div className="flex flex-row gap-2 items-center">
-    //                   <div className="text-lg font-semibold">{fake.name}</div>
-    //                   <div className="text-md text-white/70">@{fake.username}</div>
-    //                 </div>
-    //                 {getStatusBadge(fake.status)}
-    //               </div>
-    //             </div>
-    //           </div>
-    //         ))}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
+        <div className="flex items-center gap-4 px-4 py-3 bg-white bg-opacity-20 rounded-lg border border-white border-opacity-20 w-full">
+          <Search size={24} />
+          <Input
+            placeholder="Identifiant, pseudonyme, displayname, ..."
+            className="h-full placeholder:text-white/70 bg-transparent border-none text-white w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          ></Input>
+        </div>
+
+        <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full">
+          <div className="text-lg font-semibold">Résultats</div>
+          <div className="flex flex-col gap-4">
+            {users.map((user) => (
+              <div className="bg-white bg-opacity-20 rounded-lg p-2" key={user.id}>
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={user.imageUrl} alt={user.id} />
+                    <AvatarFallback className="bg-slate-900 text-white font-semibold">
+                      {user.displayName[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex flex-row gap-2 items-center">
+                      <div className="text-lg font-semibold">{user.displayName}</div>
+                      <div className="text-md text-white/70">@{user.username}</div>
+                    </div>
+                    {getStatusBadge(user.status)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
