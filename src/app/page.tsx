@@ -1,5 +1,4 @@
 "use client";
-import Header from "@/components/header";
 import Shield from "@/components/icons/shield";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -73,8 +72,7 @@ export default function Home() {
   }, [debouncedSearch]);
 
   return (
-    <div className="relative w-full h-screen flex flex-col overflow-hidden">
-      <Header />
+    <div className="h-full w-full flex flex-col">
       {/* <SignIn /> */}
       {/* <MultipleOrbit /> */}
 

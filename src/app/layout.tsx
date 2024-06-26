@@ -1,3 +1,4 @@
+import Header from "@/components/header";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
@@ -21,7 +22,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={cn("bg-background antialiased text-white", gabarito.className)}>{children}</body>
+      <body
+        className={cn(
+          "bg-background antialiased text-white h-full min-h-screen overflow-hidden w-full flex flex-col items-center",
+          gabarito.className
+        )}
+      >
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
