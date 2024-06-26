@@ -72,10 +72,7 @@ export default function Home() {
   }, [debouncedSearch]);
 
   return (
-    <div className="h-full w-full flex flex-col">
-      {/* <SignIn /> */}
-      {/* <MultipleOrbit /> */}
-
+    <div className="relative h-full w-full flex flex-col">
       <div className="flex flex-col gap-4 max-w-3xl justify-center items-center p-4 z-10 mx-auto">
         <div className="text-6xl font-extrabold w-full text-center">Rechercher un blacklist</div>
 

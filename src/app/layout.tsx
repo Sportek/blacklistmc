@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import Gradient from "@/components/landing/gradient";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
@@ -24,11 +25,14 @@ export default function RootLayout({
     <html lang="fr">
       <body
         className={cn(
-          "bg-background antialiased text-white h-full min-h-screen overflow-hidden w-full flex flex-col items-center",
+          "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center",
           gabarito.className
         )}
       >
         <Header />
+        <div className="absolute inset-0 z-0 max-h-[100vh]">
+          <Gradient />
+        </div>
         {children}
       </body>
     </html>
