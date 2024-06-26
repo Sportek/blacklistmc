@@ -3,10 +3,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const query = searchParams.get("query");
+  const query = searchParams.get("query")?.trim();
 
-  if (query === null) {
-    return new Response("Query is required", { status: 400 });
+  if (query === null || query === "") {
+    return NextResponse.json([]);
   }
 
   const users = await prisma.user.findMany({

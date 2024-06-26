@@ -5,14 +5,37 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import useDebounce from "@/hooks/useDebounce";
 import { User, UserStatus } from "@prisma/client";
+import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Check, Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+
+const container = {
+  hidden: { opacity: 1, scale: 0 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delayChildren: 0.3,
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.5 },
+  },
+  exit: { y: -20, opacity: 0, transition: { duration: 0.5 } },
+};
 
 export default function Home() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const debouncedSearch = useDebounce(search, 750);
+  const debouncedSearch = useDebounce(search, 300);
 
   const getStatusBadge = useCallback((status: UserStatus) => {
     if (status === UserStatus.BLACKLISTED) {
@@ -46,9 +69,7 @@ export default function Home() {
       setUsers(await users.json());
       setIsLoading(false);
     };
-    if (debouncedSearch) {
-      fetchUsers();
-    }
+    fetchUsers();
   }, [debouncedSearch]);
 
   return (
@@ -70,30 +91,41 @@ export default function Home() {
           ></Input>
         </div>
 
-        <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full">
-          <div className="text-lg font-semibold">Résultats</div>
-          <div className="flex flex-col gap-4">
-            {users.map((user) => (
-              <div className="bg-white bg-opacity-20 rounded-lg p-2" key={user.id}>
-                <div className="flex items-center gap-2">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={user.imageUrl} alt={user.id} />
-                    <AvatarFallback className="bg-slate-900 text-white font-semibold">
-                      {user.displayName[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex flex-row gap-2 items-center">
-                      <div className="text-lg font-semibold">{user.displayName}</div>
-                      <div className="text-md text-white/70">@{user.username}</div>
+        {users.length > 0 ? (
+          <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full">
+            <div className="text-lg font-semibold">Résultats</div>
+            <motion.div initial="hidden" animate="visible" variants={container} className="flex flex-col gap-4">
+              <AnimatePresence>
+                {users.slice(0, Math.min(users.length, 4)).map((user) => (
+                  <motion.div
+                    variants={item}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="bg-white bg-opacity-20 rounded-lg p-2"
+                    key={user.id}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={user.imageUrl} alt={user.id} />
+                        <AvatarFallback className="bg-slate-900 text-white font-semibold">
+                          {user.displayName[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex flex-row gap-2 items-center">
+                          <div className="text-lg font-semibold">{user.displayName}</div>
+                          <div className="text-md text-white/70">@{user.username}</div>
+                        </div>
+                        {getStatusBadge(user.status)}
+                      </div>
                     </div>
-                    {getStatusBadge(user.status)}
-                  </div>
-                </div>
-              </div>
-            ))}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );
