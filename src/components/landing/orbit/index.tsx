@@ -28,7 +28,7 @@ const Orbit = ({ radius, items, speed, children }: OrbitProps) => {
 
   return (
     <motion.div
-      className="inset-0 flex justify-center items-center border border-dashed border-zinc-200 rounded-full z-0"
+      className="inset-0 flex justify-center items-center border border-dashed border-white border-opacity-20 rounded-full z-0"
       style={{ width: `${radius * 2}px`, height: `${radius * 2}px` }}
       animate={controls}
     >

@@ -1,5 +1,7 @@
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Gradient from "@/components/landing/gradient";
+import MultipleOrbit from "@/components/landing/multiple-orbit";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
@@ -25,15 +27,20 @@ export default function RootLayout({
     <html lang="fr">
       <body
         className={cn(
-          "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center",
+          "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-hidden",
           gabarito.className
         )}
       >
-        <Header />
+        {/* Background */}
         <div className="absolute inset-0 z-0 max-h-[100vh]">
+          <MultipleOrbit />
           <Gradient />
         </div>
-        {children}
+
+        {/* Content */}
+        <Header />
+        <div className="w-full h-full flex-grow">{children}</div>
+        <Footer />
       </body>
     </html>
   );

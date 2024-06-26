@@ -34,7 +34,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const debouncedSearch = useDebounce(search, 300);
+  const debouncedSearch = useDebounce(search, 150);
 
   const getStatusBadge = useCallback((status: UserStatus) => {
     if (status === UserStatus.BLACKLISTED) {
@@ -72,11 +72,11 @@ export default function Home() {
   }, [debouncedSearch]);
 
   return (
-    <div className="relative h-full w-full flex flex-col">
-      <div className="flex flex-col gap-4 max-w-3xl justify-center items-center p-4 z-10 mx-auto">
-        <div className="text-6xl font-extrabold w-full text-center">Rechercher un blacklist</div>
+    <div className="relative h-full w-full flex flex-col items-center">
+      <div className="flex flex-col gap-4 max-w-xl justify-center items-center p-4 z-10 w-full">
+        <div className="text-6xl font-extrabold w-full text-center max-w-sm">Rechercher un blacklist.</div>
 
-        <div className="flex items-center gap-4 px-4 py-3 bg-white bg-opacity-20 rounded-lg border border-white border-opacity-20 w-full">
+        <div className="flex items-center gap-4 px-4 py-3 bg-white bg-opacity-20 rounded-lg border border-white border-opacity-20 w-full backdrop-blur-md">
           <Search size={24} />
           <Input
             placeholder="Identifiant, pseudonyme, displayname, ..."
@@ -87,7 +87,7 @@ export default function Home() {
         </div>
 
         {users.length > 0 ? (
-          <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full">
+          <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
             <div className="text-lg font-semibold">Résultats</div>
             <motion.div initial="hidden" animate="visible" variants={container} className="flex flex-col gap-4">
               <AnimatePresence>
