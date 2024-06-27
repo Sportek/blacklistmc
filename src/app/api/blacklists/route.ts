@@ -15,7 +15,12 @@ export async function GET(req: NextRequest) {
       },
       include: {
         user: true,
-        moderator: true,
+        votes: true,
+        _count: {
+          select: {
+            votes: true,
+          },
+        },
         proofs: true,
       },
     });

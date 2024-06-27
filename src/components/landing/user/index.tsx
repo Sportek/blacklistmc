@@ -5,7 +5,7 @@ import { AlertCircle, Check } from "lucide-react";
 import { useCallback } from "react";
 
 interface UserProps {
-  user: User;
+  user: User & { _count: { votes: number } };
 }
 
 const UserCard = ({ user }: UserProps) => {

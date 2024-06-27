@@ -1,5 +1,4 @@
-import { Blacklist, Proof } from "@prisma/client";
-import { User } from "next-auth";
+import { Blacklist, Proof, User } from "@prisma/client";
 import Card from "../../card";
 import UserCard from "../../user";
 
@@ -7,7 +6,11 @@ const RecentBlacklist = async () => {
   const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
     cache: "no-cache",
   });
-  const blacklists = (await request.json()) as (Blacklist & { user: User; moderator: User; proofs: Proof[] })[];
+  const blacklists = (await request.json()) as (Blacklist & {
+    user: User & { _count: { votes: number } };
+    moderator: User;
+    proofs: Proof[];
+  })[];
 
   return (
     <div className="relative h-full w-full flex flex-col items-center">
