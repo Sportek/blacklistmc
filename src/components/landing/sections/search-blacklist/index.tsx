@@ -25,9 +25,9 @@ const item = {
   visible: {
     y: 0,
     opacity: 1,
-    transition: { duration: 0.5 },
+    transition: { duration: 0.2 },
   },
-  exit: { y: -20, opacity: 0, transition: { duration: 0.5 } },
+  exit: { y: -20, opacity: 0, transition: { duration: 0.2 } },
 };
 
 export default function SearchBlacklist() {
@@ -62,7 +62,7 @@ export default function SearchBlacklist() {
           ></Input>
         </Card>
 
-        {search && (
+        {search && (!(isLoading || users.length === 0) || users.length > 0) && (
           <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
             <div className="text-lg font-semibold">{users.length ? `${users.length} résultats` : "Aucun résultat"}</div>
             {users.length > 0 ? (
