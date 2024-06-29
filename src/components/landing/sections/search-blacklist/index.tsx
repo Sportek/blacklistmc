@@ -40,7 +40,7 @@ export default function SearchBlacklist() {
     const fetchUsers = async () => {
       setIsLoading(true);
       const users = await fetch(`/api/research?query=${debouncedSearch}`);
-      setUsers(await users.json());
+      setUsers((await users.json()) as User[]);
       setIsLoading(false);
     };
     fetchUsers();
@@ -69,7 +69,7 @@ export default function SearchBlacklist() {
                 {users.slice(0, Math.min(users.length, 4)).map((user) => (
                   <motion.div variants={item} initial="hidden" animate="visible" exit="exit" key={user.id}>
                     <Card>
-                      <UserCard user={user} />
+                      <UserCard user={user as User & { _count: { votes: number } }} />
                     </Card>
                   </motion.div>
                 ))}

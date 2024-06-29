@@ -8,6 +8,25 @@ interface UsersUserIdBlacklistsParams {
   };
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists:
+ *   get:
+ *     summary: Get all blacklists for a user
+ *     tags:
+ *       - Blacklists
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *     responses:
+ *       200:
+ *         description: The blacklists
+ *       500:
+ *         description: Error while fetching blacklists
+ */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
@@ -18,6 +37,35 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
   return Response.json(blacklists, { status: 200 });
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists:
+ *   post:
+ *     summary: Create a new blacklist
+ *     tags:
+ *       - Blacklists
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: moderatorId
+ *         in: body
+ *         required: true
+ *         type: string
+ *         description: The discord id of the moderator
+ *       - name: reason
+ *         in: body
+ *         required: true
+ *         type: string
+ *         description: The reason for the blacklist
+ *     responses:
+ *       200:
+ *         description: The blacklist
+ *       500:
+ *         description: Error while creating blacklist
+ */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
   const { userId, moderatorId, reason } = await req.json();
   const validated = createBlacklistSchema.safeParse({ userId, moderatorId, reason });

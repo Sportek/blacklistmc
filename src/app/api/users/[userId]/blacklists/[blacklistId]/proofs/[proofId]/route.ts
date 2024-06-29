@@ -8,6 +8,36 @@ interface UserBlacklistProofParams {
     proofId: string;
   };
 }
+
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}/proofs/{proofId}:
+ *   get:
+ *     summary: Get a proof
+ *     tags:
+ *       - Proofs
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the blacklist
+ *       - name: proofId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the proof
+ *     responses:
+ *       200:
+ *         description: The proof
+ *       500:
+ *         description: Error while fetching proof
+ */
 export async function GET(req: NextRequest, { params }: UserBlacklistProofParams) {
   const { userId, blacklistId, proofId } = params;
   const proof = await prisma.proof.findUnique({
