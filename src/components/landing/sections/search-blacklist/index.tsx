@@ -54,6 +54,7 @@ export default function SearchBlacklist() {
         <Card className="flex items-center gap-4 px-4 py-3 w-full">
           {isLoading ? <ArrowPathIcon className="w-6 h-6 animate-spin" /> : <MagnifyingGlassIcon className="w-6 h-6" />}
           <Input
+            autoComplete="off"
             placeholder="Identifiant, pseudonyme, displayname, ..."
             className="h-full placeholder:text-white/70 bg-transparent border-none text-white w-full"
             value={search}
