@@ -1,4 +1,5 @@
 import { Blacklist, Proof, User } from "@prisma/client";
+import { ArrowRightIcon } from "lucide-react";
 import Card from "../../card";
 import UserCard from "../../user";
 
@@ -19,13 +20,22 @@ const RecentBlacklist = async () => {
         <div className="grid grid-cols-2 gap-2">
           {blacklists.map((blacklist) => {
             return (
-              <Card key={blacklist.id}>
-                <div className="flex flex-col items-center justify-center">
+              <Card key={blacklist.id} className="p-4">
+                <div className="flex flex-col items-center justify-center gap-4">
                   <UserCard user={blacklist.user} />
-                  <div className="flex flex-row gap-4">
-                    <div>Image</div>
+                  <div className="flex flex-row gap-4 w-full h-full">
+                    <div className="w-32 h-32 bg-gradient-to-tl from-orange-500 to bg-red-800 border border-white border-opacity-20 rounded-md"></div>
                     <div>
-                      <div>{blacklist.reason}</div>
+                      <div className="text-xl font-extrabold">{blacklist.title}</div>
+                      <div className="text-sm font-normal flex flex-row gap-2 items-center">
+                        <div>{new Date(blacklist.createdAt).toLocaleDateString()}</div>
+                        <ArrowRightIcon className="w-4 h-4" />
+                        {blacklist.blacklistUntil ? (
+                          <div>{new Date(blacklist.blacklistUntil).toLocaleDateString()}</div>
+                        ) : (
+                          <div>Définitivement</div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

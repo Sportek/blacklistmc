@@ -41,9 +41,6 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
       user: {
         connect: { discordId: userId },
       },
-      moderator: {
-        connect: { discordId: moderatorId },
-      },
     },
   });
 
