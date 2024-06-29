@@ -61,24 +61,24 @@ export default function SearchBlacklist() {
           ></Input>
         </Card>
 
-        <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
-          {search && (
+        {search && (
+          <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
             <div className="text-lg font-semibold">{users.length ? `${users.length} résultats` : "Aucun résultat"}</div>
-          )}
-          {users.length > 0 ? (
-            <motion.div initial="hidden" animate="visible" variants={container} className="flex flex-col gap-4">
-              <AnimatePresence>
-                {users.slice(0, Math.min(users.length, 4)).map((user) => (
-                  <motion.div variants={item} initial="hidden" animate="visible" exit="exit" key={user.id}>
-                    <Card>
-                      <UserCard user={user as User & { _count: { votes: number } }} />
-                    </Card>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          ) : null}
-        </div>
+            {users.length > 0 ? (
+              <motion.div initial="hidden" animate="visible" variants={container} className="flex flex-col gap-4">
+                <AnimatePresence>
+                  {users.slice(0, Math.min(users.length, 4)).map((user) => (
+                    <motion.div variants={item} initial="hidden" animate="visible" exit="exit" key={user.id}>
+                      <Card>
+                        <UserCard user={user as User & { _count: { votes: number } }} />
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            ) : null}
+          </div>
+        )}
       </div>
     </div>
   );
