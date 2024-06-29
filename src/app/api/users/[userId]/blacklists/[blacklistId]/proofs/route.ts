@@ -22,6 +22,30 @@ const getProofType = (fileName: string): ProofType => {
   return "FILE";
 };
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}/proofs:
+ *   get:
+ *     summary: Get all proofs for a blacklist
+ *     tags:
+ *       - Proofs
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the blacklist
+ *     responses:
+ *       200:
+ *         description: The proofs
+ *       500:
+ *         description: Error while fetching proofs
+ */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
@@ -37,6 +61,35 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
   return Response.json(proofs, { status: 200 });
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}/proofs:
+ *   post:
+ *     summary: Create a new proof
+ *     tags:
+ *       - Proofs
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the blacklist
+ *       - name: file
+ *         in: body
+ *         required: true
+ *         type: file
+ *         description: The file to upload
+ *     responses:
+ *       200:
+ *         description: The proof
+ *       500:
+ *         description: Error while creating proof
+ */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {

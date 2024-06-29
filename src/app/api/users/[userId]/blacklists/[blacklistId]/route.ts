@@ -8,6 +8,30 @@ interface UsersUserIdBlacklistsBlacklistIdParams {
   };
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}:
+ *   get:
+ *     summary: Get a blacklist
+ *     tags:
+ *       - Blacklists
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the blacklist
+ *     responses:
+ *       200:
+ *         description: The blacklist
+ *       500:
+ *         description: Error while fetching blacklist
+ */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
@@ -17,6 +41,30 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
   return Response.json(blacklist, { status: 200 });
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}:
+ *   delete:
+ *     summary: Delete a blacklist
+ *     tags:
+ *       - Blacklists
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the blacklist
+ *     responses:
+ *       200:
+ *         description: The blacklist
+ *       500:
+ *         description: Error while deleting blacklist
+ */
 export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {
@@ -26,6 +74,35 @@ export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklists
   return Response.json(null, { status: 204 });
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}:
+ *   patch:
+ *     summary: Update a blacklist
+ *     tags:
+ *       - Blacklists
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         type: string
+ *         description: The id of the blacklist
+ *       - name: reason
+ *         in: body
+ *         required: true
+ *         type: string
+ *         description: The reason for the blacklist
+ *     responses:
+ *       200:
+ *         description: The blacklist
+ *       500:
+ *         description: Error while updating blacklist
+ */
 export async function PATCH(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
   const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
   if (!user) {

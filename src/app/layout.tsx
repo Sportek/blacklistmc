@@ -1,7 +1,5 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import Gradient from "@/components/landing/gradient";
-import MultipleOrbit from "@/components/landing/multiple-orbit";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
@@ -31,12 +29,6 @@ export default function RootLayout({
           gabarito.className
         )}
       >
-        {/* Background */}
-        <div className="absolute inset-0 z-0 max-h-[100vh]">
-          <MultipleOrbit />
-          <Gradient />
-        </div>
-
         {/* Content */}
         <Header />
         <div className="w-full h-full flex-grow">{children}</div>
