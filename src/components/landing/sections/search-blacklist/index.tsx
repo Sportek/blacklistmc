@@ -62,7 +62,9 @@ export default function SearchBlacklist() {
         </Card>
 
         <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
-          <div className="text-lg font-semibold">{users.length ? `${users.length} résultats` : "Aucun résultat"}</div>
+          {search && (
+            <div className="text-lg font-semibold">{users.length ? `${users.length} résultats` : "Aucun résultat"}</div>
+          )}
           {users.length > 0 ? (
             <motion.div initial="hidden" animate="visible" variants={container} className="flex flex-col gap-4">
               <AnimatePresence>
