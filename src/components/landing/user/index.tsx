@@ -1,5 +1,5 @@
-import Shield from "@/components/icons/shield";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ShieldExclamationIcon } from "@heroicons/react/24/solid";
 import { User, UserStatus } from "@prisma/client";
 import { AlertCircle, Check } from "lucide-react";
 import { useCallback } from "react";
@@ -13,7 +13,7 @@ const UserCard = ({ user }: UserProps) => {
     if (status === UserStatus.BLACKLISTED) {
       return (
         <div className="bg-red-500 rounded-md gap-2 flex flex-row items-center px-2 w-fit h-fit border border-white border-opacity-20">
-          <Shield />
+          <ShieldExclamationIcon className="w-4 h-4" />
           Blacklist
         </div>
       );
