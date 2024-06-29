@@ -1,9 +1,11 @@
 import { Blacklist, Proof, User } from "@prisma/client";
 import { ArrowRightIcon } from "lucide-react";
+import { unstable_noStore } from "next/cache";
 import Card from "../../card";
 import UserCard from "../../user";
 
 const RecentBlacklist = async () => {
+  unstable_noStore();
   const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
     cache: "no-cache",
   });
