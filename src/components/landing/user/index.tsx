@@ -3,6 +3,7 @@ import { ShieldExclamationIcon } from "@heroicons/react/24/solid";
 import { User, UserStatus } from "@prisma/client";
 import { AlertCircle, Check } from "lucide-react";
 import { useCallback } from "react";
+import Badge from "../badge";
 
 interface UserProps {
   user: User & { _count: { votes: number } };
@@ -11,26 +12,11 @@ interface UserProps {
 const UserCard = ({ user }: UserProps) => {
   const getStatusBadge = useCallback((status: UserStatus) => {
     if (status === UserStatus.BLACKLISTED) {
-      return (
-        <div className="bg-red-500 rounded-md gap-2 flex flex-row items-center px-2 w-fit h-fit border border-white border-opacity-20">
-          <ShieldExclamationIcon className="w-4 h-4" />
-          Blacklist
-        </div>
-      );
+      return <Badge icon={<ShieldExclamationIcon className="w-4 h-4" />} label="BLACKLIST" className="bg-red-500" />;
     } else if (status === UserStatus.TRUSTED) {
-      return (
-        <div className="bg-green-500 rounded-md gap-2 flex flex-row items-center px-2 w-fit h-fit border border-white border-opacity-20">
-          <Check size={16} />
-          Trusted
-        </div>
-      );
+      return <Badge icon={<Check size={16} />} label="TRUSTED" className="bg-green-500" />;
     } else {
-      return (
-        <div className="bg-gray-500 rounded-md gap-2 flex flex-row items-center px-2 w-fit h-fit border border-white border-opacity-20">
-          <AlertCircle size={16} />
-          Unknown
-        </div>
-      );
+      return <Badge icon={<AlertCircle size={16} />} label="UNKNOWN" className="bg-gray-500" />;
     }
   }, []);
 

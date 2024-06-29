@@ -3,9 +3,9 @@ import Card from "@/components/landing/card";
 import UserCard from "@/components/landing/user";
 import { Input } from "@/components/ui/input";
 import useDebounce from "@/hooks/useDebounce";
+import { ArrowPathIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { User } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const container = {
@@ -52,7 +52,7 @@ export default function SearchBlacklist() {
         <div className="text-6xl font-extrabold w-full text-center max-w-sm">Rechercher un blacklist.</div>
 
         <Card className="flex items-center gap-4 px-4 py-3 w-full">
-          <Search size={24} />
+          {isLoading ? <ArrowPathIcon className="w-6 h-6 animate-spin" /> : <MagnifyingGlassIcon className="w-6 h-6" />}
           <Input
             placeholder="Identifiant, pseudonyme, displayname, ..."
             className="h-full placeholder:text-white/70 bg-transparent border-none text-white w-full"
