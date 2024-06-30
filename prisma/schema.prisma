@@ -66,9 +66,8 @@ model ModeratorVote {
 
 // Représente un utilisateur présent sur un serveur Discord qui peut être blacklisté
 model User {
-  id        String     @id @default(uuid())
-  discordId String     @unique
-  status    UserStatus @default(UNKNOWN)
+  id        String   @id @default(uuid())
+  discordId String   @unique
   account   Account?
   imageUrl  String
 

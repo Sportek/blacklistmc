@@ -1,22 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ShieldExclamationIcon } from "@heroicons/react/24/solid";
-import { User, UserStatus } from "@prisma/client";
-import { AlertCircle, Check } from "lucide-react";
-import Badge from "../badge";
+import StatusBadge from "@/components/user/status-badge";
+import { User } from "@prisma/client";
 
 interface UserProps {
   user: User & { _count: { votes: number } };
 }
-
-export const getStatusBadge = (status: UserStatus) => {
-  if (status === UserStatus.BLACKLISTED) {
-    return <Badge icon={<ShieldExclamationIcon className="w-4 h-4" />} label="BLACKLIST" className="bg-red-500" />;
-  } else if (status === UserStatus.TRUSTED) {
-    return <Badge icon={<Check size={16} />} label="TRUSTED" className="bg-green-500" />;
-  } else {
-    return <Badge icon={<AlertCircle size={16} />} label="Unknown" className="bg-gray-500" />;
-  }
-};
 
 const UserCard = ({ user }: UserProps) => {
   return (
@@ -30,7 +18,7 @@ const UserCard = ({ user }: UserProps) => {
           <div className="text-lg font-bold">{user.displayName}</div>
           <div className="text-sm font-normal text-white/70">@{user.username}</div>
         </div>
-        {getStatusBadge(user.status)}
+        <StatusBadge user={user} />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { UserStatus } from "@prisma/client";
+import { UserStatus } from "@/types/types";
 import { z } from "zod";
 
 export const userSchema = z.object({

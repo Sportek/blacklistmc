@@ -1,5 +1,4 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import SessionWrapper from "@/components/auth/session-wrapper";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
@@ -22,18 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
-      <body
-        className={cn(
-          "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-hidden",
-          gabarito.className
-        )}
-      >
-        {/* Content */}
-        <Header />
-        <div className="w-full h-full flex-grow">{children}</div>
-        <Footer />
-      </body>
-    </html>
+    <SessionWrapper>
+      <html lang="fr">
+        <body
+          className={cn(
+            "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-hidden",
+            gabarito.className
+          )}
+        >
+          {children}
+        </body>
+      </html>
+    </SessionWrapper>
   );
 }

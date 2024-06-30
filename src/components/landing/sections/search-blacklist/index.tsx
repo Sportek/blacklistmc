@@ -1,6 +1,5 @@
 "use client";
 import Card from "@/components/landing/card";
-import UserCard from "@/components/landing/user";
 import { Input } from "@/components/ui/input";
 import useDebounce from "@/hooks/useDebounce";
 import { ArrowPathIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -8,6 +7,7 @@ import { User } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import UserCard from "../../user";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },

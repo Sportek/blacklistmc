@@ -1,9 +1,3 @@
-const fetcher = async (url: RequestInfo, init?: RequestInit): Promise<any> => {
-  const response = await fetch(url, init);
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  return response.json();
-};
+const fetcher = (url: string, options?: RequestInit) => fetch(url, options).then((res) => res.json());
 
 export default fetcher;

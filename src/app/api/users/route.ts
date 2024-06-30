@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getBufferFromImageUrl, getUserInfo } from "@/http/discord-requests";
 import prisma from "@/lib/prisma";
 import { uploadBufferToAzure } from "@/utils/file-upload-manager";
-import { UserStatus } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import path from "path";
 import { ZodError } from "zod";
@@ -56,7 +55,6 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.create({
       data: {
         discordId,
-        status: UserStatus.UNKNOWN,
         imageUrl,
         displayName: userInfo.global_name || userInfo.username,
         username: userInfo.username,
