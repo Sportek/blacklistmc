@@ -15,9 +15,141 @@ import { userSchema } from "./userSchema";
  *     summary: Get all users
  *     tags:
  *       - Users
+ *     parameters:
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: The number of users to return
+ *       - name: random
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: Whether to return the users in random order
+ *     responses:
+ *       200:
+ *         description: The users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   account:
+ *                     type: object
+ *                     nullable: true
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       userId:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                   imageUrl:
+ *                     type: string
+ *                   displayName:
+ *                     type: string
+ *                   username:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                   Blacklist:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         userId:
+ *                           type: string
+ *                         title:
+ *                           type: string
+ *                         description:
+ *                           type: string
+ *                         createdAt:
+ *                           type: string
+ *                           format: date-time
+ *                         expireAt:
+ *                           type: string
+ *                           format: date-time
+ *                           nullable: true
+ *                         updatedAt:
+ *                           type: string
+ *                           format: date-time
+ *                         isFinalized:
+ *                           type: boolean
+ *                         votes:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                               blacklistId:
+ *                                 type: integer
+ *                               moderatorId:
+ *                                 type: string
+ *                               vote:
+ *                                 type: boolean
+ *                               createdAt:
+ *                                 type: string
+ *                                 format: date-time
+ *                               updatedAt:
+ *                                 type: string
+ *                                 format: date-time
+ *                   votes:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         blacklistId:
+ *                           type: integer
+ *                         moderatorId:
+ *                           type: string
+ *                         vote:
+ *                           type: boolean
+ *                         createdAt:
+ *                           type: string
+ *                           format: date-time
+ *                         updatedAt:
+ *                           type: string
+ *                           format: date-time
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Error while getting users
  */
-export async function GET() {
-  const users = await prisma.user.findMany();
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const limit = parseInt(searchParams.get("limit") ?? "10");
+  const random = searchParams.get("random") === "true" ? true : false;
+
+  let users;
+  if (random) {
+    users = await prisma.$queryRaw`SELECT * FROM "User" ORDER BY RANDOM() LIMIT ${limit}`;
+  } else {
+    users = await prisma.user.findMany({
+      take: limit,
+    });
+  }
+
   return NextResponse.json(users);
 }
 
@@ -28,17 +160,58 @@ export async function GET() {
  *     summary: Create a new user
  *     tags:
  *       - Users
- *     parameters:
- *       - name: id
- *         in: body
- *         required: true
- *         type: string
- *         description: The id of the user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: The id of the user
+ *             required:
+ *               - id
  *     responses:
  *       200:
  *         description: The user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 imageUrl:
+ *                   type: string
+ *                 displayName:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid request or User already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  *       500:
  *         description: Error while creating user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 export async function POST(req: NextRequest) {
   try {
@@ -72,7 +245,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "User already exists" }, { status: 400 });
       }
     }
-    console.error(error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
