@@ -7,7 +7,7 @@ import UserCard from "../../user";
 
 const RecentBlacklist = async () => {
   const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
-    next: { revalidate: 5 },
+    cache: "no-store",
   });
   const blacklists = (await request.json()) as (Blacklist & {
     user: User & { _count: { votes: number } };
