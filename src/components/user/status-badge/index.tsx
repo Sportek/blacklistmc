@@ -9,8 +9,12 @@ import useSWR from "swr";
 const getStatusBadge = (status: UserStatus) => {
   if (status === UserStatus.BLACKLISTED) {
     return <Badge icon={<ShieldExclamationIcon className="w-4 h-4" />} label="BLACKLIST" className="bg-red-500" />;
+  } else if (status === UserStatus.OLD_BLACKLISTED) {
+    return (
+      <Badge icon={<ShieldExclamationIcon className="w-4 h-4" />} label="ANCIEN BLACKLIST" className="bg-orange-500" />
+    );
   } else {
-    return <Badge icon={<ShieldCheckIcon className="w-4 h-4" />} label="UNKNOWN" className="bg-gray-500" />;
+    return <Badge icon={<ShieldCheckIcon className="w-4 h-4" />} label="NON BLACKLIST" className="bg-green-500" />;
   }
 };
 

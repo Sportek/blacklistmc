@@ -33,11 +33,11 @@ interface UsersUserIdBlacklistsBlacklistIdParams {
  *         description: Error while fetching blacklist
  */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
-  const blacklist = await prisma.blacklist.findUnique({ where: { id: params.blacklistId } });
+  const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   return Response.json(blacklist, { status: 200 });
 }
 
@@ -66,11 +66,11 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *         description: Error while deleting blacklist
  */
 export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
-  await prisma.blacklist.delete({ where: { id: params.blacklistId } });
+  await prisma.blacklist.delete({ where: { id: Number(params.blacklistId) } });
   return Response.json(null, { status: 204 });
 }
 
@@ -114,13 +114,13 @@ export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklists
  *         description: Error while updating blacklist
  */
 export async function PATCH(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
   const { title, description, isFinalized } = await req.json();
   const updatedBlacklist = await prisma.blacklist.update({
-    where: { id: params.blacklistId },
+    where: { id: Number(params.blacklistId) },
     data: { title, description, isFinalized },
   });
   return Response.json(updatedBlacklist, { status: 200 });

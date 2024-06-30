@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
+import { Blacklist } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UserUserIdStatusParams {
@@ -7,6 +8,20 @@ interface UserUserIdStatusParams {
     userId: string;
   };
 }
+
+const getStatus = (activeBlacklists: Blacklist[], hasOldBlacklists: boolean) => {
+  let status;
+
+  if (activeBlacklists.length > 0) {
+    status = UserStatus.BLACKLISTED;
+  } else if (hasOldBlacklists) {
+    status = UserStatus.OLD_BLACKLISTED;
+  } else {
+    status = UserStatus.NOT_BLACKLISTED;
+  }
+
+  return status;
+};
 
 /**
  * @swagger
@@ -31,7 +46,7 @@ interface UserUserIdStatusParams {
  *               properties:
  *                 status:
  *                   type: string
- *                   enum: [UNKNOWN, BLACKLISTED]
+ *                   enum: [NOT_BLACKLISTED, BLACKLISTED, OLD_BLACKLISTED]
  *       404:
  *         description: User not found
  */
@@ -49,11 +64,13 @@ export async function GET(req: NextRequest, { params }: UserUserIdStatusParams) 
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  const blacklist = user.Blacklist.filter((blacklist) => {
-    return !blacklist.blacklistUntil || blacklist.blacklistUntil > new Date();
+  const activeBlacklists = user.Blacklist.filter((blacklist) => {
+    return !blacklist.expireAt || blacklist.expireAt > new Date();
   });
 
+  const hasOldBlacklists = user.Blacklist.length > 0 && activeBlacklists.length === 0;
+
   return NextResponse.json({
-    status: blacklist.length > 0 ? UserStatus.BLACKLISTED : UserStatus.UNKNOWN,
+    status: getStatus(activeBlacklists, hasOldBlacklists),
   });
 }

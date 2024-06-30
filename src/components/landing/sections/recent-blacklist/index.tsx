@@ -1,18 +1,12 @@
-import { ArrowLongRightIcon, ShieldCheckIcon, ShieldExclamationIcon } from "@heroicons/react/24/solid";
-import { Blacklist, Proof, User } from "@prisma/client";
-import Link from "next/link";
-import Badge from "../../badge";
-import Card from "../../card";
-import UserCard from "../../user";
+import BlacklistCard from "@/components/blacklist";
+import { Blacklist, User } from "@prisma/client";
 
 const RecentBlacklist = async () => {
   const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
     cache: "no-store",
   });
   const blacklists = (await request.json()) as (Blacklist & {
-    user: User & { _count: { votes: number } };
-    moderator: User;
-    proofs: Proof[];
+    user: User;
   })[];
 
   return (
@@ -21,55 +15,7 @@ const RecentBlacklist = async () => {
         <div className="font-bold text-xl">Blacklist récents</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           {blacklists.map((blacklist) => {
-            return (
-              <Link key={blacklist.id} href={`/users/${blacklist.userId}`}>
-                <Card className="p-4 hover:bg-opacity-30 transition-all duration-75 ease-in-out">
-                  <div className="flex flex-col items-center justify-center gap-4">
-                    <UserCard user={blacklist.user} />
-                    <div className="flex flex-row gap-4 w-full h-full">
-                      <div className="w-32 h-32 bg-gradient-to-tl from-orange-500 to bg-red-800 border border-white border-opacity-20 rounded-md"></div>
-                      <div className="flex flex-col gap-2">
-                        <div className="text-xl font-extrabold">{blacklist.title}</div>
-                        <div className="text-sm font-normal flex flex-row gap-2 items-center">
-                          <div>
-                            {new Date(blacklist.createdAt).toLocaleDateString("fr-FR", {
-                              day: "2-digit",
-                              month: "long",
-                              year: "numeric",
-                            })}
-                          </div>
-                          <ArrowLongRightIcon className="w-4 h-4" />
-                          {blacklist.blacklistUntil ? (
-                            <div>
-                              {new Date(blacklist.blacklistUntil).toLocaleDateString("fr-FR", {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                              })}
-                            </div>
-                          ) : (
-                            <div>Définitivement</div>
-                          )}
-                        </div>
-                        {!blacklist.blacklistUntil || blacklist.blacklistUntil < new Date() ? (
-                          <Badge
-                            icon={<ShieldExclamationIcon className="w-4 h-4" />}
-                            label="ACTIF"
-                            className="bg-red-500"
-                          />
-                        ) : (
-                          <Badge
-                            icon={<ShieldCheckIcon className="w-4 h-4" />}
-                            label="RÉSOLU"
-                            className="bg-green-500"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            );
+            return <BlacklistCard key={blacklist.id} blacklist={blacklist} user={blacklist.user} />;
           })}
         </div>
       </div>

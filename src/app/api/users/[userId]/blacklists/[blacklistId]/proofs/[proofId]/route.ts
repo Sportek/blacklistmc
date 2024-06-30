@@ -39,11 +39,11 @@ interface UserBlacklistProofParams {
  *         description: Error while fetching proof
  */
 export async function GET(req: NextRequest, { params }: UserBlacklistProofParams) {
-  const { userId, blacklistId, proofId } = params;
+  const { blacklistId, proofId } = params;
   const proof = await prisma.proof.findUnique({
     where: {
       id: proofId,
-      blacklistId: blacklistId,
+      blacklistId: Number(blacklistId),
     },
   });
 

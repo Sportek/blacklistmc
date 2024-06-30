@@ -47,17 +47,17 @@ const getProofType = (fileName: string): ProofType => {
  *         description: Error while fetching proofs
  */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
 
-  const blacklist = await prisma.blacklist.findUnique({ where: { id: params.blacklistId } });
+  const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });
   }
 
-  const proofs = await prisma.proof.findMany({ where: { blacklistId: params.blacklistId } });
+  const proofs = await prisma.proof.findMany({ where: { blacklistId: Number(params.blacklistId) } });
   return Response.json(proofs, { status: 200 });
 }
 
@@ -91,11 +91,11 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *         description: Error while creating proof
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
-  const blacklist = await prisma.blacklist.findUnique({ where: { id: params.blacklistId } });
+  const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });
   }
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBl
     const proof = await prisma.proof.create({
       data: {
         url: fileName,
-        blacklistId: params.blacklistId,
+        blacklistId: Number(params.blacklistId),
         type: getProofType(fileName),
       },
     });

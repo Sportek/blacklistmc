@@ -9,7 +9,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Header />
-      <div className="w-full h-full flex-grow">{children}</div>
+      <div className="w-full h-full flex-grow flex flex-col">{children}</div>
       <Footer />
     </>
   );

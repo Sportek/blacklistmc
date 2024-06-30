@@ -28,7 +28,7 @@ interface UsersUserIdBlacklistsParams {
  *         description: Error while fetching blacklists
  */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
@@ -65,6 +65,11 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *         required: false
  *         type: boolean
  *         description: Whether the blacklist is finalized
+ *       - name: expireAt
+ *         in: body
+ *         required: false
+ *         type: string
+ *         description: The end date of the blacklist
  *     responses:
  *       200:
  *         description: The blacklist
@@ -72,13 +77,14 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *         description: Error while creating blacklist
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
-  const { userId, title, description, isFinalized } = await req.json();
-  const validated = createBlacklistSchema.safeParse({ userId, title, description, isFinalized });
+  const { title, description, isFinalized, expireAt } = await req.json();
+  const validated = createBlacklistSchema.safeParse({ title, description, isFinalized, expireAt });
   if (!validated.success) {
+    console.log(validated.error);
     return Response.json({ error: "Invalid data" }, { status: 400 });
   }
 
-  const userExists = await prisma.user.findUnique({ where: { discordId: userId } });
+  const userExists = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!userExists) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
@@ -88,8 +94,9 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
       title,
       description,
       isFinalized,
+      expireAt: expireAt ? new Date(expireAt) : null,
       user: {
-        connect: { discordId: userId },
+        connect: { id: params.userId },
       },
     },
   });

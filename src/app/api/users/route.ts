@@ -29,11 +29,11 @@ export async function GET() {
  *     tags:
  *       - Users
  *     parameters:
- *       - name: discordId
+ *       - name: id
  *         in: body
  *         required: true
  *         type: string
- *         description: The discord id of the user
+ *         description: The id of the user
  *     responses:
  *       200:
  *         description: The user
@@ -43,18 +43,18 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { discordId } = userSchema.parse(body);
-    const userInfo = await getUserInfo(discordId);
+    const { id } = userSchema.parse(body);
+    const userInfo = await getUserInfo(id);
 
     const imageUrl = await uploadBufferToAzure(
-      await getBufferFromImageUrl(`https://cdn.discordapp.com/avatars/${discordId}/${userInfo.avatar}.png`),
-      path.posix.join("users", discordId, "avatars", `${Date.now()}.png`),
+      await getBufferFromImageUrl(`https://cdn.discordapp.com/avatars/${id}/${userInfo.avatar}.png`),
+      path.posix.join("users", id, "avatars", `${Date.now()}.png`),
       true
     );
 
     const user = await prisma.user.create({
       data: {
-        discordId,
+        id,
         imageUrl,
         displayName: userInfo.global_name || userInfo.username,
         username: userInfo.username,
@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(user);
   } catch (error) {
+    console.log(error);
     if (error instanceof ZodError) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "User already exists" }, { status: 400 });
       }
     }
+    console.error(error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

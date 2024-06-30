@@ -3,7 +3,7 @@ import StatusBadge from "@/components/user/status-badge";
 import { User } from "@prisma/client";
 
 interface UserProps {
-  user: User & { _count: { votes: number } };
+  user: User;
 }
 
 const UserCard = ({ user }: UserProps) => {

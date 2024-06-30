@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     where: {
       OR: [
         {
-          discordId: {
+          id: {
             contains: query,
             mode: "insensitive",
           },

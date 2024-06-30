@@ -27,7 +27,7 @@ interface UsersIdParams {
  *         description: Error while fetching user
  */
 export async function GET(req: NextRequest, { params }: UsersIdParams) {
-  const user = await prisma.user.findUnique({ where: { discordId: params.userId } });
+  const user = await prisma.user.findUnique({ where: { id: params.userId } });
   return NextResponse.json(user);
 }
 
@@ -51,6 +51,6 @@ export async function GET(req: NextRequest, { params }: UsersIdParams) {
  *         description: Error while deleting user
  */
 export async function DELETE(req: NextRequest, { params }: UsersIdParams) {
-  await prisma.user.delete({ where: { discordId: params.userId } });
+  await prisma.user.delete({ where: { id: params.userId } });
   return NextResponse.json({ message: "User deleted" });
 }
