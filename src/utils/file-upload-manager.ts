@@ -1,4 +1,9 @@
-import { BlobServiceClient } from "@azure/storage-blob";
+import {
+  BlobSASPermissions,
+  BlobServiceClient,
+  StorageSharedKeyCredential,
+  generateBlobSASQueryParameters,
+} from "@azure/storage-blob";
 import { NextRequest } from "next/server";
 import path from "path";
 
@@ -34,14 +39,29 @@ export async function uploadFileToAzure(req: NextRequest, filePrefix: string): P
   return filePath;
 }
 
-export async function uploadBufferToAzure(buffer: Uint8Array, filePath: string) {
+export async function uploadBufferToAzure(buffer: Uint8Array, filePath: string, isPublic = false): Promise<string> {
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
-
-  console.log("FilePath", filePath);
-
   const blockBlobClient = containerClient.getBlockBlobClient(filePath);
   await blockBlobClient.uploadData(buffer);
+
+  if (isPublic) {
+    const sharedKeyCredential = new StorageSharedKeyCredential(
+      process.env.AZURE_STORAGE_ACCOUNT_NAME,
+      process.env.AZURE_STORAGE_ACCOUNT_KEY
+    );
+    const sasOptions = {
+      containerName: process.env.AZURE_STORAGE_CONTAINER_NAME,
+      blobName: filePath,
+      permissions: BlobSASPermissions.parse("r"),
+      startsOn: new Date(),
+      expiresOn: new Date(new Date().setFullYear(new Date().getFullYear() + 100)),
+    };
+    const sasToken = generateBlobSASQueryParameters(sasOptions, sharedKeyCredential).toString();
+    return `${blockBlobClient.url}?${sasToken}`;
+  }
+
+  return blockBlobClient.url;
 }
 
 export async function retrieveBufferFromAzure(filePath: string) {

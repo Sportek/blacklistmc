@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getBufferFromImageUrl, getUserInfo } from "@/http/discord-requests";
 import prisma from "@/lib/prisma";
+import { uploadBufferToAzure } from "@/utils/file-upload-manager";
 import { UserStatus } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import path from "path";
+import { ZodError } from "zod";
 import { userSchema } from "./userSchema";
 
 /**
@@ -30,28 +35,6 @@ export async function GET() {
  *         required: true
  *         type: string
  *         description: The discord id of the user
- *       - name: status
- *         in: body
- *         required: true
- *         schema:
- *           type: string
- *           enum: [ "TRUSTED", "BLACKLISTED", "UNKNOWN" ]
- *         description: The status of the user
- *       - name: imageUrl
- *         in: body
- *         required: true
- *         type: string
- *         description: The image url of the user
- *       - name: displayName
- *         in: body
- *         required: true
- *         type: string
- *         description: The display name of the user
- *       - name: username
- *         in: body
- *         required: true
- *         type: string
- *         description: The username of the user
  *     responses:
  *       200:
  *         description: The user
@@ -61,20 +44,35 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { discordId, status, imageUrl, displayName, username } = userSchema.parse(body);
+    const { discordId } = userSchema.parse(body);
+    const userInfo = await getUserInfo(discordId);
+
+    const imageUrl = await uploadBufferToAzure(
+      await getBufferFromImageUrl(`https://cdn.discordapp.com/avatars/${discordId}/${userInfo.avatar}.png`),
+      path.posix.join("users", discordId, "avatars", `${Date.now()}.png`),
+      true
+    );
 
     const user = await prisma.user.create({
       data: {
         discordId,
+        status: UserStatus.UNKNOWN,
         imageUrl,
-        displayName,
-        username,
-        status: status as UserStatus,
+        displayName: userInfo.global_name || userInfo.username,
+        username: userInfo.username,
       },
     });
 
     return NextResponse.json(user);
   } catch (error) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    if (error instanceof ZodError) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return NextResponse.json({ error: "User already exists" }, { status: 400 });
+      }
+    }
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import RecentBlacklist from "@/components/landing/sections/recent-blacklist";
 import SearchBlacklist from "@/components/landing/sections/search-blacklist";
 import Victim from "@/components/landing/sections/victim";
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
       {/* Background */}

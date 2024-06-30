@@ -1,4 +1,7 @@
-const Gradient = () => {
+interface GradientProps {
+  className?: string;
+}
+const Gradient = ({ className }: GradientProps) => {
   return (
     <svg width="100%" height="100%" viewBox="0 0 1366 1126" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g style={{ mixBlendMode: "screen" }} opacity="0.1" filter="url(#filter0_f_2059_187)">

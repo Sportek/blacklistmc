@@ -50,16 +50,21 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *         required: true
  *         type: string
  *         description: The discord id of the user
- *       - name: moderatorId
+ *       - name: title
  *         in: body
  *         required: true
  *         type: string
- *         description: The discord id of the moderator
- *       - name: reason
+ *         description: The title of the blacklist
+ *       - name: description
  *         in: body
  *         required: true
  *         type: string
- *         description: The reason for the blacklist
+ *         description: The description of the blacklist
+ *       - name: isFinalized
+ *         in: body
+ *         required: false
+ *         type: boolean
+ *         description: Whether the blacklist is finalized
  *     responses:
  *       200:
  *         description: The blacklist
@@ -67,8 +72,8 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *         description: Error while creating blacklist
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
-  const { userId, moderatorId, reason } = await req.json();
-  const validated = createBlacklistSchema.safeParse({ userId, moderatorId, reason });
+  const { userId, title, description, isFinalized } = await req.json();
+  const validated = createBlacklistSchema.safeParse({ userId, title, description, isFinalized });
   if (!validated.success) {
     return Response.json({ error: "Invalid data" }, { status: 400 });
   }
@@ -78,14 +83,11 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
     return Response.json({ error: "User not found" }, { status: 404 });
   }
 
-  const moderatorExists = await prisma.user.findUnique({ where: { discordId: moderatorId } });
-  if (!moderatorExists) {
-    return Response.json({ error: "Moderator not found" }, { status: 404 });
-  }
-
   const blacklist = await prisma.blacklist.create({
     data: {
-      reason,
+      title,
+      description,
+      isFinalized,
       user: {
         connect: { discordId: userId },
       },

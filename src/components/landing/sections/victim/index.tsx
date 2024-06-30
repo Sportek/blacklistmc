@@ -6,9 +6,9 @@ import Quadrille from "../../quadrille";
 const Victim = () => {
   return (
     <BaseSpacing className="pb-24">
-      <div className="w-full h-full flex flex-col sm:flex-row items-center gap-16">
-        <Quadrille className="max-w-lg" />
-        <div className="flex flex-col gap-8">
+      <div className="w-full h-full flex flex-col sm:flex-row items-center gap-10">
+        <Quadrille className="w-full" />
+        <div className="flex flex-col gap-8 w-full">
           <div className="text-4xl font-extrabold">Avez-vous été victime d&apos;une arnaque?</div>
           <div className="text-sm font-normal">
             Si vous avez été victime d&apos;une arnaque ou d&apos;un préjudice venant d&apos;une personne, nous vous

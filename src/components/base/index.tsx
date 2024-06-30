@@ -8,7 +8,7 @@ interface BaseSpacingProps extends HTMLAttributes<HTMLDivElement> {
 
 const BaseSpacing = ({ children, className, ...props }: BaseSpacingProps) => {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center h-full">
       <div className={cn("max-w-6xl p-4 w-full", className)} {...props}>
         {children}
       </div>

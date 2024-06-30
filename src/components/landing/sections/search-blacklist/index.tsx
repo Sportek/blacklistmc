@@ -6,6 +6,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { ArrowPathIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { User } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const container = {
@@ -58,16 +59,25 @@ export default function SearchBlacklist() {
         </Card>
 
         {search && (!(isLoading || users.length === 0) || users.length > 0) && (
-          <div className="bg-white bg-opacity-20 p-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
-            <div className="text-lg font-semibold">{users.length ? `${users.length} résultats` : "Aucun résultat"}</div>
+          <div className="bg-white bg-opacity-20 py-4 rounded-lg border border-white border-opacity-20 gap-4 w-full backdrop-blur-md">
+            <div className="text-lg font-semibold px-4">
+              {users.length ? `${users.length} résultats` : "Aucun résultat"}
+            </div>
             {users.length > 0 ? (
-              <motion.div initial="hidden" animate="visible" variants={container} className="flex flex-col gap-4">
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={container}
+                className="flex flex-col gap-2 max-h-[350px] overflow-y-auto px-4"
+              >
                 <AnimatePresence>
-                  {users.slice(0, Math.min(users.length, 4)).map((user) => (
+                  {users.map((user) => (
                     <motion.div variants={item} initial="hidden" animate="visible" exit="exit" key={user.id}>
-                      <Card>
-                        <UserCard user={user as User & { _count: { votes: number } }} />
-                      </Card>
+                      <Link href={`/users/${user.id}`}>
+                        <Card className="hover:bg-opacity-30 transition-all duration-75 ease-in-out">
+                          <UserCard user={user as User & { _count: { votes: number } }} />
+                        </Card>
+                      </Link>
                     </motion.div>
                   ))}
                 </AnimatePresence>
