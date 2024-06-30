@@ -53,7 +53,7 @@ const UserPage = async ({ params }: UserPageProps) => {
       <div className="absolute inset-0 z-0 max-h-[100vh] top-[-200px]">
         <Gradient />
       </div>
-      <BaseSpacing className="z-10 flex flex-col items-center justify-center gap-10 max-w-4xl flex-grow">
+      <BaseSpacing className="z-10 flex flex-col items-center gap-10 max-w-4xl flex-grow">
         <div className="flex flex-col gap-2">
           <div className="flex flex-row gap-4 items-center flex-wrap">
             <Image className="rounded-full" src={user.imageUrl} alt="Avatar" width={48} height={48} />

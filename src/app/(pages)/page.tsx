@@ -1,3 +1,4 @@
+import BaseSpacing from "@/components/base";
 import Gradient from "@/components/landing/gradient";
 import MultipleOrbit from "@/components/landing/multiple-orbit";
 import RecentBlacklist from "@/components/landing/sections/recent-blacklist";
@@ -12,11 +13,13 @@ export default async function Home() {
         <MultipleOrbit />
         <Gradient />
       </div>
-      <div className="flex flex-col gap-20">
-        <SearchBlacklist />
-        <RecentBlacklist />
-        <Victim />
-      </div>
+      <BaseSpacing>
+        <div className="flex flex-col gap-20">
+          <SearchBlacklist />
+          <RecentBlacklist />
+          <Victim />
+        </div>
+      </BaseSpacing>
     </>
   );
 }

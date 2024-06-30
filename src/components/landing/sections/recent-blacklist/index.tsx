@@ -11,7 +11,7 @@ const RecentBlacklist = async () => {
 
   return (
     <div className="relative h-full w-full flex flex-col items-center">
-      <div className="w-full flex flex-col gap-4 justify-between max-w-6xl p-4 z-10">
+      <div className="w-full flex flex-col gap-4 justify-between max-w-4xl p-4 z-10">
         <div className="font-bold text-xl">Blacklist récents</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           {blacklists.map((blacklist) => {
