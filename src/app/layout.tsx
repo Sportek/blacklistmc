@@ -25,7 +25,7 @@ export default function RootLayout({
       <html lang="fr">
         <body
           className={cn(
-            "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-hidden",
+            "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-clip",
             gabarito.className
           )}
         >
