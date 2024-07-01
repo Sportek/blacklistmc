@@ -1,4 +1,3 @@
-import SessionWrapper from "@/components/auth/session-wrapper";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
@@ -21,17 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionWrapper>
-      <html lang="fr">
-        <body
-          className={cn(
-            "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-clip",
-            gabarito.className
-          )}
-        >
-          {children}
-        </body>
-      </html>
-    </SessionWrapper>
+    <html lang="fr">
+      <body
+        className={cn(
+          "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-clip",
+          gabarito.className
+        )}
+      >
+        {children}
+      </body>
+    </html>
   );
 }
