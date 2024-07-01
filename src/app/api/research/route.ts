@@ -23,22 +23,7 @@ import { NextResponse } from "next/server";
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   imageUrl:
- *                     type: string
- *                   displayName:
- *                     type: string
- *                   username:
- *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   updatedAt:
- *                     type: string
- *                     format: date-time
+ *                 $ref: "#/components/schemas/User"
  *       400:
  *         description: Invalid request
  *         content:

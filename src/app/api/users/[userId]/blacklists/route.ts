@@ -19,13 +19,37 @@ interface UsersUserIdBlacklistsParams {
  *       - name: userId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The discord id of the user
  *     responses:
  *       200:
  *         description: The blacklists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/Blacklist"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: User not found
  *       500:
  *         description: Error while fetching blacklists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
   const user = await prisma.user.findUnique({ where: { id: params.userId } });
@@ -48,40 +72,85 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *       - name: userId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The discord id of the user
- *       - name: title
- *         in: body
- *         required: true
- *         type: string
- *         description: The title of the blacklist
- *       - name: description
- *         in: body
- *         required: true
- *         type: string
- *         description: The description of the blacklist
- *       - name: isFinalized
- *         in: body
- *         required: false
- *         type: boolean
- *         description: Whether the blacklist is finalized
- *       - name: expireAt
- *         in: body
- *         required: false
- *         type: string
- *         description: The end date of the blacklist
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The title of the blacklist
+ *               description:
+ *                 type: string
+ *                 description: The description of the blacklist
+ *               askedByUserId:
+ *                 type: string
+ *                 description: The id of the user who created the blacklist
+ *               expireAt:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *                 description: The end date of the blacklist
+ *               channelId:
+ *                 type: string
+ *                 description: The id of the channel related to the blacklist
+ *             required:
+ *               - title
+ *               - description
+ *               - askedByUserId
  *     responses:
- *       200:
- *         description: The blacklist
+ *       201:
+ *         description: The created blacklist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Blacklist"
+ *       400:
+ *         description: Invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *       404:
+ *         description: User not found or Asked by user not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  *       500:
  *         description: Error while creating blacklist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
-  const { title, description, isFinalized, expireAt } = await req.json();
-  const validated = createBlacklistSchema.safeParse({ title, description, isFinalized, expireAt });
+  const { title, description, askedByUserId, expireAt, channelId } = await req.json();
+  console.log(askedByUserId);
+  const validated = createBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
   if (!validated.success) {
-    console.log(validated.error);
-    return Response.json({ error: "Invalid data" }, { status: 400 });
+    const errorMessages = validated.error.flatten().fieldErrors;
+    return Response.json({ error: "Invalid data", details: errorMessages }, { status: 400 });
   }
 
   const userExists = await prisma.user.findUnique({ where: { id: params.userId } });
@@ -89,11 +158,17 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
     return Response.json({ error: "User not found" }, { status: 404 });
   }
 
+  const askedByUser = await prisma.user.findUnique({ where: { id: askedByUserId } });
+  if (!askedByUser) {
+    return Response.json({ error: "Asked by user not found" }, { status: 404 });
+  }
+
   const blacklist = await prisma.blacklist.create({
     data: {
       title,
       description,
-      isFinalized,
+      askedByUser: { connect: { id: askedByUserId } },
+      channelId,
       expireAt: expireAt ? new Date(expireAt) : null,
       user: {
         connect: { id: params.userId },

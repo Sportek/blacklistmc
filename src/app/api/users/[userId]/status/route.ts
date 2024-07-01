@@ -35,7 +35,8 @@ const getStatus = (activeBlacklists: Blacklist[], hasOldBlacklists: boolean) => 
  *       - name: userId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: The status of the user
@@ -49,6 +50,14 @@ const getStatus = (activeBlacklists: Blacklist[], hasOldBlacklists: boolean) => 
  *                   enum: [NOT_BLACKLISTED, BLACKLISTED, OLD_BLACKLISTED]
  *       404:
  *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
  */
 export async function GET(req: NextRequest, { params }: UserUserIdStatusParams) {
   const user = await prisma.user.findUnique({

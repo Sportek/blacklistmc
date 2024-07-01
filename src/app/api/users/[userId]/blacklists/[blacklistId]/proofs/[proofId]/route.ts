@@ -20,23 +20,48 @@ interface UserBlacklistProofParams {
  *       - name: userId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The id of the blacklist
  *       - name: proofId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The id of the proof
  *     responses:
  *       200:
  *         description: The proof
+ *         content:
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Proof not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Proof not found
  *       500:
  *         description: Error while fetching proof
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 export async function GET(req: NextRequest, { params }: UserBlacklistProofParams) {
   const { blacklistId, proofId } = params;

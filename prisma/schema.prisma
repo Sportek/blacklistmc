@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -13,16 +14,28 @@ datasource db {
   url      = env("POSTGRES_PRISMA_URL")
 }
 
-enum UserStatus {
-  TRUSTED
-  BLACKLISTED
-  UNKNOWN
-}
-
 enum ProofType {
   VIDEO
   IMAGE
   FILE
+}
+
+enum BlacklistStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BlacklistVoteState {
+  PENDING
+  EVIDENCE
+  BLACKLIST
+}
+
+enum AccountRole {
+  USER
+  MODERATOR
+  ADMIN
 }
 
 // Représente un compte utilisateur qui a été enregistré sur le site
@@ -32,36 +45,46 @@ model Account {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Account_user_relation")
 
+  role AccountRole @default(USER)
+
   createdAt DateTime @default(now()) @db.Timestamp(3)
   updatedAt DateTime @updatedAt @db.Timestamp(3)
 }
 
 // Représente les informations du blacklist
 model Blacklist {
-  id          Int       @id @default(autoincrement())
-  userId      String
-  user        User      @relation("UserBlacklist", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Blacklist_user_relation")
-  title       String    @db.VarChar(255)
-  description String    @db.Text
-  proofs      Proof[]   @relation("BlacklistProofs")
-  createdAt   DateTime  @default(now()) @db.Timestamp(3)
-  expireAt    DateTime?
-  updatedAt   DateTime  @updatedAt @db.Timestamp(3)
-  isFinalized Boolean   @default(false)
+  id     Int    @id @default(autoincrement())
+  userId String // Id de l'utilisateur qui est blacklisté
+  user   User   @relation("UserBlacklist", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Blacklist_user_relation")
 
-  votes ModeratorVote[]
+  askedByUserId String // Id de l'utilisateur qui a ouvert le blacklist
+  askedByUser   User   @relation("Blacklist_askedBy_relation", fields: [askedByUserId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  title       String?         @db.VarChar(255)
+  description String?         @db.Text
+  proofs      Proof[]         @relation("BlacklistProofs")
+  createdAt   DateTime        @default(now()) @db.Timestamp(3)
+  expireAt    DateTime?
+  updatedAt   DateTime        @updatedAt @db.Timestamp(3)
+  status      BlacklistStatus @default(PENDING)
+  channelId   String?
+
+  voteEndAt DateTime?
+  voteState BlacklistVoteState @default(PENDING)
+  votes     ModeratorVote[]
 }
 
 // Représente les votes des modérateurs pour un blacklist
 model ModeratorVote {
-  id          String    @id @default(uuid())
+  id          String             @id @default(uuid())
+  voteState   BlacklistVoteState @default(PENDING)
   blacklistId Int
-  blacklist   Blacklist @relation(fields: [blacklistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  blacklist   Blacklist          @relation(fields: [blacklistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   moderatorId String
-  moderator   User      @relation(fields: [moderatorId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  moderator   User               @relation(fields: [moderatorId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   vote        Boolean
-  createdAt   DateTime  @default(now()) @db.Timestamp(3)
-  updatedAt   DateTime  @updatedAt @db.Timestamp(3)
+  createdAt   DateTime           @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime           @updatedAt @db.Timestamp(3)
 }
 
 // Représente un utilisateur présent sur un serveur Discord qui peut être blacklisté
@@ -70,14 +93,28 @@ model User {
   account  Account?
   imageUrl String
 
+  imageTag String // Id de l'image envoyé par discord
+
   displayName String
   username    String
 
   createdAt DateTime @default(now()) @db.Timestamp(3)
   updatedAt DateTime @updatedAt @db.Timestamp(3)
 
-  Blacklist Blacklist[]     @relation("UserBlacklist")
-  votes     ModeratorVote[]
+  Blacklist       Blacklist[]     @relation("UserBlacklist")
+  votes           ModeratorVote[]
+  UserHistory     UserHistory[]
+  askedBlacklists Blacklist[]     @relation("Blacklist_askedBy_relation")
+}
+
+model UserHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  imageUrl    String
+  displayName String
+  username    String
+  createdAt   DateTime @default(now()) @db.Timestamp(3)
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "UserHistory_user_relation")
 }
 
 // Représente les preuves de blacklist

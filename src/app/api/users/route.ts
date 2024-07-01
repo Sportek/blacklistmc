@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getBufferFromImageUrl, getUserInfo } from "@/http/discord-requests";
+import { updateOrCreateUserInfo } from "@/http/discord-requests";
 import prisma from "@/lib/prisma";
-import { uploadBufferToAzure } from "@/utils/file-upload-manager";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import path from "path";
 import { ZodError } from "zod";
 import { userSchema } from "./userSchema";
 
@@ -36,101 +34,7 @@ import { userSchema } from "./userSchema";
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   account:
- *                     type: object
- *                     nullable: true
- *                     properties:
- *                       id:
- *                         type: string
- *                       email:
- *                         type: string
- *                       userId:
- *                         type: string
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                   imageUrl:
- *                     type: string
- *                   displayName:
- *                     type: string
- *                   username:
- *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   updatedAt:
- *                     type: string
- *                     format: date-time
- *                   Blacklist:
- *                     type: array
- *                     items:
- *                       type: object
- *                       properties:
- *                         id:
- *                           type: integer
- *                         userId:
- *                           type: string
- *                         title:
- *                           type: string
- *                         description:
- *                           type: string
- *                         createdAt:
- *                           type: string
- *                           format: date-time
- *                         expireAt:
- *                           type: string
- *                           format: date-time
- *                           nullable: true
- *                         updatedAt:
- *                           type: string
- *                           format: date-time
- *                         isFinalized:
- *                           type: boolean
- *                         votes:
- *                           type: array
- *                           items:
- *                             type: object
- *                             properties:
- *                               id:
- *                                 type: string
- *                               blacklistId:
- *                                 type: integer
- *                               moderatorId:
- *                                 type: string
- *                               vote:
- *                                 type: boolean
- *                               createdAt:
- *                                 type: string
- *                                 format: date-time
- *                               updatedAt:
- *                                 type: string
- *                                 format: date-time
- *                   votes:
- *                     type: array
- *                     items:
- *                       type: object
- *                       properties:
- *                         id:
- *                           type: string
- *                         blacklistId:
- *                           type: integer
- *                         moderatorId:
- *                           type: string
- *                         vote:
- *                           type: boolean
- *                         createdAt:
- *                           type: string
- *                           format: date-time
- *                         updatedAt:
- *                           type: string
- *                           format: date-time
+ *                 $ref: "#/components/schemas/User"
  *       400:
  *         description: Invalid request
  *       500:
@@ -178,22 +82,7 @@ export async function GET(req: NextRequest) {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 imageUrl:
- *                   type: string
- *                 displayName:
- *                   type: string
- *                 username:
- *                   type: string
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
+ *               $ref: "#/components/schemas/User"
  *       400:
  *         description: Invalid request or User already exists
  *         content:
@@ -217,24 +106,9 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { id } = userSchema.parse(body);
-    const userInfo = await getUserInfo(id);
+    const userInfo = await updateOrCreateUserInfo(id);
 
-    const imageUrl = await uploadBufferToAzure(
-      await getBufferFromImageUrl(`https://cdn.discordapp.com/avatars/${id}/${userInfo.avatar}.png`),
-      path.posix.join("users", id, "avatars", `${Date.now()}.png`),
-      true
-    );
-
-    const user = await prisma.user.create({
-      data: {
-        id,
-        imageUrl,
-        displayName: userInfo.global_name || userInfo.username,
-        username: userInfo.username,
-      },
-    });
-
-    return NextResponse.json(user);
+    return NextResponse.json(userInfo);
   } catch (error) {
     console.log(error);
     if (error instanceof ZodError) {

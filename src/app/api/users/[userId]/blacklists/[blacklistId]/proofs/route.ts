@@ -33,18 +33,43 @@ const getProofType = (fileName: string): ProofType => {
  *       - name: userId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The id of the blacklist
  *     responses:
  *       200:
  *         description: The proofs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/Proof"
+ *       404:
+ *         description: User or blacklist not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: User not found
  *       500:
  *         description: Error while fetching proofs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { id: params.userId } });
@@ -72,23 +97,51 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *       - name: userId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true
- *         type: string
+ *         schema:
+ *           type: string
  *         description: The id of the blacklist
- *       - name: file
- *         in: body
- *         required: true
- *         type: file
- *         description: The file to upload
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The file to upload
  *     responses:
  *       200:
- *         description: The proof
+ *         description: The created proof
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Proof"
+ *       404:
+ *         description: User or blacklist not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  *       500:
  *         description: Error while creating proof
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
   const user = await prisma.user.findUnique({ where: { id: params.userId } });
