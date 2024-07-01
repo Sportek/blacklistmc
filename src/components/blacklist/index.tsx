@@ -7,18 +7,26 @@ import UserCard from "../landing/user";
 
 export const generateGradient = (blacklistId: number) => {
   const colors = [
-    "linear-gradient(to top left, #f97316, #991b1b)", // Orange to Red
-    "linear-gradient(to top left, #eab308, #854d0e)", // Yellow to Brown
-    "linear-gradient(to top left, #22c55e, #166534)", // Green to Dark Green
-    "linear-gradient(to top left, #3b82f6, #1e3a8a)", // Blue to Dark Blue
-    "linear-gradient(to top left, #6366f1, #312e81)", // Indigo to Dark Indigo
-    "linear-gradient(to top left, #8b5cf6, #5b21b6)", // Violet to Dark Violet
-    "linear-gradient(to top left, #ff7f50, #ff4500)", // Coral to OrangeRed
-    "linear-gradient(to top left, #ff6347, #ff0000)", // Tomato to Red
-    "linear-gradient(to top left, #ffd700, #ffa500)", // Gold to Orange
-    "linear-gradient(to top left, #adff2f, #7fff00)", // GreenYellow to Chartreuse
-    "linear-gradient(to top left, #00ced1, #20b2aa)", // DarkTurquoise to LightSeaGreen
-    "linear-gradient(to top left, #1e90ff, #0000ff)", // DodgerBlue to Blue
+    "linear-gradient(to top left, #ff7e5f, #feb47b)", // Orange to light orange
+    "linear-gradient(to top left, #6a11cb, #2575fc)", // Purple to blue
+    "linear-gradient(to top left, #fc6767, #ec008c)", // Pink to magenta
+    "linear-gradient(to top left, #00c6ff, #0072ff)", // Light blue to dark blue
+    "linear-gradient(to top left, #ff6b6b, #556270)", // Light red to dark grey
+    "linear-gradient(to top left, #36d1dc, #5b86e5)", // Light teal to blue
+    "linear-gradient(to top left, #ff0084, #33001b)", // Magenta to dark purple
+    "linear-gradient(to top left, #ff9966, #ff5e62)", // Light orange to red
+    "linear-gradient(to top left, #00c9ff, #92fe9d)", // Cyan to light green
+    "linear-gradient(to top left, #fc00ff, #00dbde)", // Magenta to teal
+    "linear-gradient(to top left, #f12711, #f5af19)", // Red to orange
+    "linear-gradient(to top left, #43cea2, #185a9d)", // Light green to blue
+    "linear-gradient(to top left, #9d50bb, #6e48aa)", // Purple to dark purple
+    "linear-gradient(to top left, #ff4b1f, #1fddff)", // Orange to blue
+    "linear-gradient(to top left, #ee9ca7, #ffdde1)", // Light pink to peach
+    "linear-gradient(to top left, #42275a, #734b6d)", // Dark purple to light purple
+    "linear-gradient(to top left, #eg0cc, #9aeb7e)", // Light orange to mint green
+    "linear-gradient(to top left, #e0eafc, #cfdef3)", // Light blue to very light grey
+    "linear-gradient(to top left, #00f260, #0575e6)", // Light green to blue
+    "linear-gradient(to top left, #ffafbd, #ffc3a0)", // Light pink to peach
   ];
   return colors[blacklistId % colors.length];
 };
