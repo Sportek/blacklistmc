@@ -11,7 +11,7 @@ interface UserUserIdGroupParams {
  * @swagger
  * /api/users/{userId}/groups:
  *   get:
- *     summary: Get the group for a user
+ *     summary: Get player's linked accounts
  *     tags:
  *       - Users
  *     parameters:
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest, { params }: UserUserIdGroupParams) {
  * @swagger
  * /api/users/{userId}/groups:
  *   post:
- *     summary: Merge user groups
+ *     summary: Merge user accounts
  *     tags:
  *       - Users
  *     parameters:
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) 
  * @swagger
  * /api/users/{userId}/groups:
  *   delete:
- *     summary: Remove user from group
+ *     summary: Remove player from account group
  *     tags:
  *       - Users
  *     parameters:
