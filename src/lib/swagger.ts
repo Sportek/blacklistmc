@@ -40,6 +40,8 @@ export const getApiDocs = async () => {
                 type: "array",
                 items: { $ref: "#/components/schemas/UserHistory" },
               },
+              groupId: { type: "string", nullable: true },
+              group: { $ref: "#/components/schemas/UserGroup" },
             },
           },
           Account: {
@@ -48,13 +50,10 @@ export const getApiDocs = async () => {
               id: { type: "string" },
               email: { type: "string" },
               userId: { type: "string" },
+              user: { $ref: "#/components/schemas/User" },
               role: { type: "string", enum: ["USER", "MODERATOR", "ADMIN"] },
               createdAt: { type: "string", format: "date-time" },
               updatedAt: { type: "string", format: "date-time" },
-              Blacklist: {
-                type: "array",
-                items: { $ref: "#/components/schemas/Blacklist" },
-              },
             },
           },
           Blacklist: {
@@ -64,9 +63,13 @@ export const getApiDocs = async () => {
               userId: { type: "string" },
               user: { $ref: "#/components/schemas/User" },
               askedByUserId: { type: "string" },
-              askedByUser: { $ref: "#/components/schemas/Account" },
+              askedByUser: { $ref: "#/components/schemas/User" },
               title: { type: "string", nullable: true },
               description: { type: "string", nullable: true },
+              proofs: {
+                type: "array",
+                items: { $ref: "#/components/schemas/Proof" },
+              },
               createdAt: { type: "string", format: "date-time" },
               expireAt: { type: "string", format: "date-time", nullable: true },
               updatedAt: { type: "string", format: "date-time" },
@@ -78,24 +81,14 @@ export const getApiDocs = async () => {
                 type: "array",
                 items: { $ref: "#/components/schemas/ModeratorVote" },
               },
-              proofs: {
-                type: "array",
-                items: { $ref: "#/components/schemas/Proof" },
-              },
-              _count: {
-                type: "object",
-                properties: {
-                  votes: { type: "integer" },
-                },
-              },
             },
           },
           ModeratorVote: {
             type: "object",
             properties: {
               id: { type: "string" },
-              blacklistId: { type: "integer" },
               voteState: { type: "string", enum: ["PENDING", "EVIDENCE", "BLACKLIST"] },
+              blacklistId: { type: "integer" },
               blacklist: { $ref: "#/components/schemas/Blacklist" },
               moderatorId: { type: "string" },
               moderator: { $ref: "#/components/schemas/User" },
@@ -112,6 +105,7 @@ export const getApiDocs = async () => {
               type: { type: "string", enum: ["VIDEO", "IMAGE", "FILE"] },
               url: { type: "string" },
               blacklistId: { type: "integer" },
+              blacklist: { $ref: "#/components/schemas/Blacklist" },
               createdAt: { type: "string", format: "date-time" },
               updatedAt: { type: "string", format: "date-time" },
             },
@@ -121,22 +115,53 @@ export const getApiDocs = async () => {
             properties: {
               id: { type: "string" },
               userId: { type: "string" },
+              user: { $ref: "#/components/schemas/User" },
               imageUrl: { type: "string" },
               displayName: { type: "string" },
               username: { type: "string" },
               createdAt: { type: "string", format: "date-time" },
-              user: { $ref: "#/components/schemas/User" },
+            },
+          },
+          UserGroup: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              users: {
+                type: "array",
+                items: { $ref: "#/components/schemas/User" },
+              },
+              createdAt: { type: "string", format: "date-time" },
+              updatedAt: { type: "string", format: "date-time" },
             },
           },
         },
       },
-      security: [],
+      security: [{ BearerAuth: [] }],
       tags: [
         {
+          name: "Accounts",
+        },
+        {
           name: "Blacklists",
+        },
+        {
+          name: "Users",
+        },
+        {
+          name: "ModeratorVotes",
+        },
+        {
+          name: "Proofs",
+        },
+        {
+          name: "UserHistories",
+        },
+        {
+          name: "UserGroups",
         },
       ],
     },
   });
+
   return spec;
 };

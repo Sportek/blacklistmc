@@ -7,12 +7,42 @@ interface UserUserIdGroupParams {
   };
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/groups:
+ *   get:
+ *     summary: Get the group for a user
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: The user's group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserGroup"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: User not found
+ */
 export async function GET(req: NextRequest, { params }: UserUserIdGroupParams) {
   const { userId } = params;
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
     include: {
       group: {
         include: {
@@ -21,10 +51,151 @@ export async function GET(req: NextRequest, { params }: UserUserIdGroupParams) {
       },
     },
   });
+
   if (!user) return Response.json({ error: "User not found" }, { status: 404 });
   return Response.json(user.group);
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/groups:
+ *   post:
+ *     summary: Merge user groups
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               secondUserId:
+ *                 type: string
+ *                 description: ID of the second user
+ *     responses:
+ *       200:
+ *         description: Groups merged successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) {
+  const { userId } = params;
+  const { secondUserId } = await req.json();
+
+  if (!userId || !secondUserId) {
+    return Response.json({ error: "User IDs are required" }, { status: 400 });
+  }
+
+  try {
+    const result = await mergeGroups(userId, secondUserId);
+    return Response.json(result);
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+/**
+ * @swagger
+ * /api/users/{userId}/groups:
+ *   delete:
+ *     summary: Remove user from group
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: User removed from group or group deleted if empty
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User removed from group
+ *       404:
+ *         description: User not found or doesn't belong to a group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+export async function DELETE(req: NextRequest, { params }: UserUserIdGroupParams) {
+  const { userId } = params;
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!user) return Response.json({ error: "User not found" }, { status: 404 });
+  if (!user.groupId) return Response.json({ error: "User does not belong to a group" }, { status: 404 });
+
+  const groupId = user.groupId;
+  await prisma.user.update({
+    where: { id: userId },
+    data: { groupId: null },
+  });
+
+  const groupMembers = await prisma.user.findMany({
+    where: { groupId },
+  });
+
+  if (groupMembers.length === 0) {
+    await prisma.userGroup.delete({ where: { id: groupId } });
+    return Response.json({ message: "Group deleted" });
+  }
+
+  return Response.json({ message: "User removed from group" });
+}
+
+// Helper functions remain same as previously defined
 async function findUserById(userId: string) {
   return prisma.user.findUnique({ where: { id: userId } });
 }
@@ -52,7 +223,6 @@ async function addUsersToGroup(groupId: string, userIds: string[]) {
 
 async function mergeGroups(userId1: string, userId2: string) {
   const [user1, user2] = await Promise.all([findUserById(userId1), findUserById(userId2)]);
-
   const user1GroupId = user1?.groupId;
   const user2GroupId = user2?.groupId;
 
@@ -77,49 +247,9 @@ async function mergeGroups(userId1: string, userId2: string) {
       await addUsersToGroup(String(user1GroupId), user2Ids);
       await prisma.userGroup.delete({ where: { id: String(user2GroupId) } });
     });
+
     return { message: "Groups merged successfully" };
   }
+
   return { message: "Users are already in the same group" };
-}
-
-export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) {
-  const { userId } = params;
-  const { secondUserId } = await req.json();
-
-  if (!userId || !secondUserId) {
-    return Response.json({ error: "User IDs are required" }, { status: 400 });
-  }
-
-  try {
-    const result = await mergeGroups(userId, secondUserId);
-    return Response.json(result);
-  } catch (error) {
-    console.error(error);
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
-  }
-}
-
-export async function DELETE(req: NextRequest, { params }: UserUserIdGroupParams) {
-  const { userId } = params;
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) return Response.json({ error: "User not found" }, { status: 404 });
-  if (!user.groupId) return Response.json({ error: "User does not belong to a group" }, { status: 404 });
-
-  const groupId = user.groupId;
-
-  await prisma.user.update({
-    where: { id: userId },
-    data: { groupId: null },
-  });
-
-  const groupMembers = await prisma.user.findMany({
-    where: { groupId },
-  });
-
-  if (groupMembers.length === 0) {
-    await prisma.userGroup.delete({ where: { id: groupId } });
-    return Response.json({ message: "Group deleted" });
-  }
-
-  return Response.json({ message: "User removed from group" });
 }
