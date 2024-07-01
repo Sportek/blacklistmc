@@ -13,6 +13,8 @@ interface OrbitProps {
 const Orbit = ({ radius, items, speed, children }: OrbitProps) => {
   const controls = useAnimation();
 
+  const inversedControls = useAnimation();
+
   useEffect(() => {
     controls.start({
       rotate: 360,
@@ -22,7 +24,16 @@ const Orbit = ({ radius, items, speed, children }: OrbitProps) => {
         ease: "linear",
       },
     });
-  }, [controls, speed]);
+
+    inversedControls.start({
+      rotate: -360,
+      transition: {
+        duration: speed,
+        repeat: Infinity,
+        ease: "linear",
+      },
+    });
+  }, [controls, speed, inversedControls]);
 
   const angleStep = 360 / items.length;
 
@@ -39,17 +50,19 @@ const Orbit = ({ radius, items, speed, children }: OrbitProps) => {
           const y = radius * Math.sin((angle * Math.PI) / 180);
 
           return (
-            <div
+            <motion.div
               key={index}
-              className="absolute rounded-full"
+              className="absolute"
               style={{
                 top: `calc(50% + ${y}px)`,
                 left: `calc(50% + ${x}px)`,
-                transform: "translate(-50%, -50%)",
+                transform: `translate(-50%, -50%)`,
               }}
             >
-              {item}
-            </div>
+              <motion.div className="rounded-full" animate={inversedControls}>
+                {item}
+              </motion.div>
+            </motion.div>
           );
         })}
         <div className="absolute inset-0 flex justify-center items-center">
