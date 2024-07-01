@@ -87,6 +87,13 @@ model ModeratorVote {
   updatedAt   DateTime           @updatedAt @db.Timestamp(3)
 }
 
+model UserGroup {
+  id        String   @id @default(uuid())
+  users     User[]   @relation("UserGroupRelation")
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @updatedAt @db.Timestamp(3)
+}
+
 // Représente un utilisateur présent sur un serveur Discord qui peut être blacklisté
 model User {
   id       String   @id
@@ -105,6 +112,9 @@ model User {
   votes           ModeratorVote[]
   UserHistory     UserHistory[]
   askedBlacklists Blacklist[]     @relation("Blacklist_askedBy_relation")
+
+  groupId String?
+  group   UserGroup? @relation("UserGroupRelation", fields: [groupId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }
 
 model UserHistory {

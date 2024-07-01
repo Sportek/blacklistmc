@@ -4,11 +4,12 @@ import { User } from "@prisma/client";
 
 interface UserProps {
   user: User;
+  noBadge?: boolean;
 }
 
-const UserCard = ({ user }: UserProps) => {
+const UserCard = ({ user, noBadge = false }: UserProps) => {
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className="flex items-center gap-4 w-full">
       <Avatar className="w-12 h-12">
         <AvatarImage src={user.imageUrl} alt={user.id} />
         <AvatarFallback className="bg-slate-900 text-white font-semibold">{user.displayName[0]}</AvatarFallback>
@@ -18,7 +19,7 @@ const UserCard = ({ user }: UserProps) => {
           <div className="text-lg font-bold">{user.displayName}</div>
           <div className="text-sm font-normal text-white/70">@{user.username}</div>
         </div>
-        <StatusBadge user={user} />
+        {!noBadge && <StatusBadge user={user} />}
       </div>
     </div>
   );

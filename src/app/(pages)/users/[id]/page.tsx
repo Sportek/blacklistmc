@@ -8,6 +8,7 @@ import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
 import { User } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 const getPreventionMessage = (status: UserStatus) => {
@@ -33,6 +34,11 @@ const UserPage = async ({ params }: UserPageProps) => {
     },
     include: {
       UserHistory: true,
+      group: {
+        include: {
+          users: true,
+        },
+      },
       Blacklist: {
         include: {
           user: true,
@@ -68,30 +74,41 @@ const UserPage = async ({ params }: UserPageProps) => {
           {getPreventionMessage(userStatusJson.status)}
         </div>
         <div className="flex flex-col md:flex-row gap-10 w-full">
-          <div className="flex flex-col gap-4 w-full">
-            <div className="font-bold text-xl">Historique du compte</div>
-            <div className="flex flex-col gap-4">
-              {(user.UserHistory || []).map((history) => {
-                return (
-                  <Card key={history.id} className="w-full">
-                    <UserCard user={{ ...history, id: user.id } as unknown as User} />
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 w-full">
-            <div className="font-bold text-xl">Doubles comptes répertoriés</div>
-            <div className="flex flex-col gap-4">
-              {(user.UserHistory || []).map((history) => {
-                return (
-                  <Card key={history.id} className="w-full">
-                    <UserCard user={{ ...history, id: user.id } as unknown as User} />
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
+          {(user.UserHistory || []).length > 0 ? (
+            <>
+              <div className="flex flex-col gap-4 w-full">
+                <div className="font-bold text-xl">Historique du compte</div>
+                <div className="flex flex-col gap-4"></div>
+                {(user.UserHistory || [])
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .map((history) => {
+                    return <UserCard noBadge key={history.id} user={{ ...history, id: user.id } as unknown as User} />;
+                  })}
+              </div>
+            </>
+          ) : null}
+          {(user.group?.users || []).length > 0 ? (
+            <>
+              <div className="flex flex-col gap-4 w-full">
+                <div className="font-bold text-xl">Doubles comptes répertoriés</div>
+                <div className="flex flex-col gap-4">
+                  {(user.group?.users || []).length > 0
+                    ? (user.group?.users || [])
+                        .filter((sameUser) => sameUser.id !== user.id)
+                        .map((sameUser) => {
+                          return (
+                            <Link key={sameUser.id} href={`/users/${sameUser.id}`}>
+                              <Card className="w-full hover:bg-opacity-30 transition-all duration-75 ease-in-out">
+                                <UserCard user={sameUser} />
+                              </Card>
+                            </Link>
+                          );
+                        })
+                    : null}
+                </div>
+              </div>
+            </>
+          ) : null}
         </div>
         {user.Blacklist.length > 0 && (
           <div className="w-full flex flex-col gap-4">
