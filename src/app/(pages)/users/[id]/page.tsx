@@ -1,9 +1,12 @@
 import BaseSpacing from "@/components/base";
 import BlacklistCard from "@/components/blacklist";
+import Card from "@/components/landing/card";
 import Gradient from "@/components/landing/gradient";
+import UserCard from "@/components/landing/user";
 import StatusBadge from "@/components/user/status-badge";
 import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
+import { User } from "@prisma/client";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -29,6 +32,7 @@ const UserPage = async ({ params }: UserPageProps) => {
       id: params.id,
     },
     include: {
+      UserHistory: true,
       Blacklist: {
         include: {
           user: true,
@@ -62,6 +66,32 @@ const UserPage = async ({ params }: UserPageProps) => {
             <StatusBadge user={user} />
           </div>
           {getPreventionMessage(userStatusJson.status)}
+        </div>
+        <div className="flex flex-col md:flex-row gap-10 w-full">
+          <div className="flex flex-col gap-4 w-full">
+            <div className="font-bold text-xl">Historique du compte</div>
+            <div className="flex flex-col gap-4">
+              {(user.UserHistory || []).map((history) => {
+                return (
+                  <Card key={history.id} className="w-full">
+                    <UserCard user={{ ...history, id: user.id } as unknown as User} />
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 w-full">
+            <div className="font-bold text-xl">Doubles comptes répertoriés</div>
+            <div className="flex flex-col gap-4">
+              {(user.UserHistory || []).map((history) => {
+                return (
+                  <Card key={history.id} className="w-full">
+                    <UserCard user={{ ...history, id: user.id } as unknown as User} />
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
         </div>
         {user.Blacklist.length > 0 && (
           <div className="w-full flex flex-col gap-4">

@@ -40,7 +40,13 @@ interface UsersIdParams {
  *                   type: string
  */
 export async function GET(req: NextRequest, { params }: UsersIdParams) {
-  const user = await prisma.user.findUnique({ where: { id: params.userId } });
+  const user = await prisma.user.findUnique({
+    where: { id: params.userId },
+    include: {
+      account: true,
+      UserHistory: true,
+    },
+  });
   return NextResponse.json(user);
 }
 

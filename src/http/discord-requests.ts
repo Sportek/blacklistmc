@@ -61,10 +61,13 @@ interface UserData {
   global_name: string;
 }
 export const areUserInfoDifferent = (oldUserInfo: UserData, newUserInfo: UserData) => {
+  const displayName = newUserInfo.global_name || newUserInfo.username;
+  const oldDisplayName = oldUserInfo.global_name || oldUserInfo.username;
+
   return (
     oldUserInfo.username !== newUserInfo.username ||
     oldUserInfo.avatar !== newUserInfo.avatar ||
-    (oldUserInfo.global_name || oldUserInfo.username) !== (newUserInfo.global_name || newUserInfo.username)
+    oldDisplayName !== displayName
   );
 };
 
@@ -81,7 +84,7 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
     user = await prisma.user.create({
       data: {
         id: userId,
-        displayName: userInfo.username,
+        displayName: userInfo.global_name || userInfo.username,
         username: userInfo.username,
         imageTag: userInfo.avatar,
         imageUrl: imageUrl,
@@ -107,6 +110,7 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
       data: {
         username: userInfo.username,
         imageTag: userInfo.avatar,
+        displayName: userInfo.global_name || userInfo.username,
         imageUrl: imageUrl,
         UserHistory: {
           connect: {
@@ -127,5 +131,6 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
 
 export const updateOrCreateUserInfo = async (userId: string) => {
   const userInfo = await getUserInfo(userId);
+  console.log(userInfo);
   return await setUserInfo(userId, userInfo);
 };
