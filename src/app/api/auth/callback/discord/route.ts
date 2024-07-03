@@ -1,8 +1,10 @@
 import { updateOrCreateUserInfo } from "@/http/discord-requests";
 import prisma from "@/lib/prisma";
 import { Account } from "@prisma/client";
+import cookie from "cookie";
 import jwt from "jsonwebtoken";
-import { NextRequest, NextResponse } from "next/server";
+import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
 export interface DiscordUser {
   id: string;
@@ -53,12 +55,14 @@ export const createAccountIfNotExist = async (user: DiscordUser) => {
   }
 };
 
-export const generateJWT = (account: Account, expiresIn: string) => {
-  return jwt.sign({ id: account.id }, process.env.JWT_SECRET, { expiresIn });
+export type JWTType = "WEB" | "API";
+
+export const generateJWT = (account: Account, type: JWTType, expiresIn: string | undefined = undefined) => {
+  return jwt.sign({ id: account.id, type }, process.env.JWT_SECRET, { expiresIn });
 };
 
-export const GET = async (req: NextRequest, res: NextResponse) => {
-  const code = req.nextUrl.searchParams.get("code");
+export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
+  const code = req.query.code;
 
   if (!code || Array.isArray(code)) {
     return NextResponse.json({ error: "Code not found" }, { status: 400 });
@@ -106,7 +110,18 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       return NextResponse.json({ error: "Account not found" }, { status: 400 });
     }
 
-    const token = generateJWT(account, "30d");
+    const token = generateJWT(account, "WEB", "30d");
+
+    res.setHeader(
+      "Set-Cookie",
+      cookie.serialize("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "development",
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: "strict",
+        path: "/",
+      })
+    );
 
     return NextResponse.json({ user: userData, token }, { status: 200 });
   } catch (error: any) {
