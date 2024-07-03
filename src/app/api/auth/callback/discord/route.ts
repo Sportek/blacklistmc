@@ -1,3 +1,7 @@
+import { updateOrCreateUserInfo } from "@/http/discord-requests";
+import prisma from "@/lib/prisma";
+import { Account } from "@prisma/client";
+import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface DiscordUser {
@@ -22,10 +26,41 @@ export interface DiscordCallbackResponse {
   token: DiscordToken;
 }
 
+export const createAccountIfNotExist = async (user: DiscordUser) => {
+  await updateOrCreateUserInfo(user.id);
+
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+    include: {
+      account: true,
+    },
+  });
+
+  if (!existingUser?.account) {
+    await prisma.account.create({
+      data: {
+        email: user.email,
+        role: "USER",
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+  }
+};
+
+export const generateJWT = (account: Account, expiresIn: string) => {
+  return jwt.sign({ id: account.id }, process.env.JWT_SECRET, { expiresIn });
+};
+
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const code = req.nextUrl.searchParams.get("code");
 
-  if (!code) {
+  if (!code || Array.isArray(code)) {
     return NextResponse.json({ error: "Code not found" }, { status: 400 });
   }
 
@@ -59,7 +94,21 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     const userData = await userResponse.json();
 
-    return NextResponse.json({ user: userData, token: tokenData });
+    await createAccountIfNotExist(userData);
+
+    const account = await prisma.account.findUnique({
+      where: {
+        userId: userData.id,
+      },
+    });
+
+    if (!account) {
+      return NextResponse.json({ error: "Account not found" }, { status: 400 });
+    }
+
+    const token = generateJWT(account, "30d");
+
+    return NextResponse.json({ user: userData, token }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
