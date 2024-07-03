@@ -3,7 +3,14 @@ interface GradientProps {
 }
 const Gradient = ({ className }: GradientProps) => {
   return (
-    <svg width="100%" height="100%" viewBox="0 0 1366 1126" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className={className}
+      width="100%"
+      height="100%"
+      viewBox="0 0 1366 1126"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <g style={{ mixBlendMode: "screen" }} opacity="0.1" filter="url(#filter0_f_2059_187)">
         <path
           d="M1070.5 640.256C972.502 815.525 775.464 1012.12 585.18 991.027C394.221 970.472 208.664 733.301 217.052 495.459C224.764 258.156 426.421 20.1802 616.184 -35.6956C807.106 -91.5029 987.004 33.1053 1077.13 172.649C1167.27 312.192 1167.82 465.525 1070.5 640.256Z"

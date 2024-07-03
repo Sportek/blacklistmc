@@ -1,33 +1,20 @@
 import { User } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 import Orbit from "../orbit";
 
 const generateRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const MultipleOrbit = async () => {
-  const firstLine = generateRandomNumber(3, 6);
-  const secondLine = generateRandomNumber(3, 6);
-  const thirdLine = generateRandomNumber(3, 6);
+interface MultipleOrbitProps {
+  className?: string;
+}
 
-  const types = [
-    {
-      type: "big",
-      width: 50,
-      height: 50,
-    },
-    {
-      type: "medium",
-      width: 30,
-      height: 30,
-    },
-    {
-      type: "small",
-      width: 30,
-      height: 30,
-    },
-  ];
+const MultipleOrbit = async ({ className }: MultipleOrbitProps) => {
+  const firstLine = generateRandomNumber(4, 7);
+  const secondLine = generateRandomNumber(2, 8);
+  const thirdLine = generateRandomNumber(3, 6);
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/users?limit=${firstLine + secondLine + thirdLine}&random=true`
@@ -35,60 +22,61 @@ const MultipleOrbit = async () => {
   const users = (await response.json()) as User[];
 
   return (
-    <div className="absolute inset-0 flex justify-center items-center -z-50">
+    <div className={className}>
       <Orbit
         speed={100}
         radius={400}
         items={users.slice(0, firstLine).map((user) => {
-          const type = types[generateRandomNumber(0, 2)];
           return (
-            <Image
-              className="rounded-full"
-              key={user.id}
-              src={user.imageUrl}
-              alt={user.displayName}
-              width={type.width}
-              height={type.height}
-            />
-          );
-        })}
-      >
-        <Orbit
-          speed={140}
-          radius={350}
-          items={users.slice(firstLine, firstLine + secondLine).map((user) => {
-            const type = types[generateRandomNumber(0, 2)];
-            return (
+            <Link href={`/users/${user.id}`} key={user.id}>
               <Image
                 className="rounded-full"
                 key={user.id}
                 src={user.imageUrl}
                 alt={user.displayName}
-                width={type.width}
-                height={type.height}
+                width={50}
+                height={50}
               />
-            );
-          })}
-        >
-          <Orbit
-            speed={180}
-            radius={300}
-            items={users.slice(firstLine + secondLine, firstLine + secondLine + thirdLine).map((user) => {
-              const type = types[generateRandomNumber(0, 2)];
-              return (
-                <Image
-                  className="rounded-full"
-                  key={user.id}
-                  src={user.imageUrl}
-                  alt={user.displayName}
-                  width={type.width}
-                  height={type.height}
-                />
-              );
-            })}
-          />
-        </Orbit>
-      </Orbit>
+            </Link>
+          );
+        })}
+      ></Orbit>
+      <Orbit
+        speed={140}
+        radius={325}
+        items={users.slice(firstLine, firstLine + secondLine).map((user) => {
+          return (
+            <Link href={`/users/${user.id}`} key={user.id}>
+              <Image
+                className="rounded-full"
+                key={user.id}
+                src={user.imageUrl}
+                alt={user.displayName}
+                width={40}
+                height={40}
+              />
+            </Link>
+          );
+        })}
+      ></Orbit>
+      <Orbit
+        speed={180}
+        radius={250}
+        items={users.slice(firstLine + secondLine, firstLine + secondLine + thirdLine).map((user) => {
+          return (
+            <Link href={`/users/${user.id}`} key={user.id}>
+              <Image
+                className="rounded-full"
+                key={user.id}
+                src={user.imageUrl}
+                alt={user.displayName}
+                width={20}
+                height={20}
+              />
+            </Link>
+          );
+        })}
+      />
     </div>
   );
 };

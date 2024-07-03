@@ -9,9 +9,9 @@ export default async function Home() {
   return (
     <>
       {/* Background */}
-      <div className="absolute inset-0 z-0 max-h-[100vh]">
-        <MultipleOrbit />
-        <Gradient />
+      <div className="absolute inset-0 max-h-[100vh]">
+        <MultipleOrbit className="-z-30" />
+        <Gradient className="-z-50" />
       </div>
       <BaseSpacing>
         <div className="flex flex-col gap-20">
