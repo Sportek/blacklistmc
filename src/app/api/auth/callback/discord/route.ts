@@ -1,5 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export interface DiscordUser {
+  id: string;
+  username: string;
+  discriminator: string;
+  avatar: string;
+  global_name: string;
+  email: string;
+}
+
+export interface DiscordToken {
+  token_type: string;
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string;
+}
+
+export interface DiscordCallbackResponse {
+  user: DiscordUser;
+  token: DiscordToken;
+}
+
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const code = req.nextUrl.searchParams.get("code");
 
