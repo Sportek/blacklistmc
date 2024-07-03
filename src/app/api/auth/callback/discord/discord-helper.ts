@@ -1,3 +1,8 @@
+import { updateOrCreateUserInfo } from "@/http/discord-requests";
+import prisma from "@/lib/prisma";
+import { Account } from "@prisma/client";
+import jwt from "jsonwebtoken";
+
 export interface DiscordUser {
   id: string;
   username: string;
