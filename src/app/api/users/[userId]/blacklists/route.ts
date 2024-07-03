@@ -146,7 +146,6 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
   const { title, description, askedByUserId, expireAt, channelId } = await req.json();
-  console.log(askedByUserId);
   const validated = createBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
   if (!validated.success) {
     const errorMessages = validated.error.flatten().fieldErrors;

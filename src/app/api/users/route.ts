@@ -110,7 +110,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(userInfo);
   } catch (error) {
-    console.log(error);
     if (error instanceof ZodError) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }

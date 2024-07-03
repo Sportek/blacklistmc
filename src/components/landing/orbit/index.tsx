@@ -51,8 +51,6 @@ const Orbit = ({ radius, items, speed, children, className }: OrbitProps) => {
       >
         <div className="relative" style={{ width: `${radius * 2}px`, height: `${radius * 2}px` }}>
           {items.map((item, index) => {
-            console.log(items.length, speed);
-
             const angle = index * angleStep;
             const x = radius * Math.cos((angle * Math.PI) / 180);
             const y = radius * Math.sin((angle * Math.PI) / 180);

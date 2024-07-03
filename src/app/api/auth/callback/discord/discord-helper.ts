@@ -22,7 +22,7 @@ export interface DiscordToken {
 
 export interface DiscordCallbackResponse {
   user: DiscordUser;
-  token: DiscordToken;
+  token: string;
 }
 
 export const createAccountIfNotExist = async (user: DiscordUser) => {
