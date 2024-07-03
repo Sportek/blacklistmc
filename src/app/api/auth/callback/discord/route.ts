@@ -58,7 +58,51 @@ export type JWTType = "WEB" | "API";
 export const generateJWT = (account: Account, type: JWTType, expiresIn: string | undefined = undefined) => {
   return jwt.sign({ id: account.id, type }, process.env.JWT_SECRET, { expiresIn });
 };
-
+/**
+ * @swagger
+ * /api/auth/callback/discord:
+ *   get:
+ *     summary: Get user account details via Discord OAuth2 code
+ *     tags:
+ *       - Accounts
+ *     parameters:
+ *       - name: code
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The authorization code returned by Discord OAuth2
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user information and generated JWT
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/DiscordUser'
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Invalid request or errors during OAuth2 process
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const code = req.nextUrl.searchParams.get("code");
 
