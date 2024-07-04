@@ -131,6 +131,5 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
 
 export const updateOrCreateUserInfo = async (userId: string) => {
   const userInfo = await getUserInfo(userId);
-  console.log(userInfo);
   return await setUserInfo(userId, userInfo);
 };

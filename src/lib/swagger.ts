@@ -134,6 +134,28 @@ export const getApiDocs = async () => {
               updatedAt: { type: "string", format: "date-time" },
             },
           },
+          // Ajouter uniquement les schémas nécessaires pour la documentation de cette route
+          DiscordUser: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              username: { type: "string" },
+              discriminator: { type: "string" },
+              avatar: { type: "string" },
+              global_name: { type: "string" },
+              email: { type: "string" },
+            },
+          },
+          DiscordToken: {
+            type: "object",
+            properties: {
+              token_type: { type: "string" },
+              access_token: { type: "string" },
+              expires_in: { type: "integer" },
+              refresh_token: { type: "string" },
+              scope: { type: "string" },
+            },
+          },
         },
       },
       security: [{ BearerAuth: [] }],
@@ -148,20 +170,10 @@ export const getApiDocs = async () => {
           name: "Users",
         },
         {
-          name: "ModeratorVotes",
-        },
-        {
           name: "Proofs",
-        },
-        {
-          name: "UserHistories",
-        },
-        {
-          name: "UserGroups",
         },
       ],
     },
   });
-
   return spec;
 };
