@@ -55,11 +55,11 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
   }
 
   const params = new URLSearchParams();
-  params.append("client_id", process.env.AUTH_DISCORD_ID);
+  params.append("client_id", process.env.NEXT_PUBLIC_AUTH_DISCORD_ID);
   params.append("client_secret", process.env.AUTH_DISCORD_SECRET);
   params.append("grant_type", "authorization_code");
   params.append("code", code);
-  params.append("redirect_uri", process.env.AUTH_DISCORD_REDIRECT_URI);
+  params.append("redirect_uri", process.env.NEXT_PUBLIC_AUTH_DISCORD_REDIRECT_URI);
 
   try {
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
