@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# [BlacklistMC](https://blacklistmc.fr)
 
-## Getting Started
+![banner](./public/blacklistmc/banner.png)
 
-First, run the development server:
+BlacklistMC centralise les blacklists Minecraft pour une gestion simplifiée des bannissements. Des modérateurs expérimentés garantissent des sanctions justes et efficaces.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Pourquoi utiliser notre site?
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Vérifiez la crédibilité de certains prestataires.
+- Centralise les blacklists Minecraft pour une gestion simplifiée des bannissements.
+- Des modérateurs expérimentés garantissent des sanctions justes et efficaces.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Objectifs à court terme
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [ ] Sécuriser l'ensemble de l'API
+- [ ] Permettre la gestion des différentes preuves
+- [ ] Permettre à l'aide du dashboard de gérer les différents users
+- [ ] Permettre à l'aide du dashboard de gérer les différents blacklists
+- [ ] Ajouter la vue pour récupérer les informations sur un blacklist
+- [ ] et plus encore...
 
-## Learn More
+Vous pouvez contribuer au projet en signalant des problèmes, suggérant de nouvelles fonctionnalités ou en soumettant des pull requests sur GitHub.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[![Github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sportek/minecraft-stats)
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/dGEqqPEaXP)
