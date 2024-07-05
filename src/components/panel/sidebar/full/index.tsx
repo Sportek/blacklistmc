@@ -1,6 +1,8 @@
 import Logo from "@/public/blacklistmc/logo.svg";
+import { TrashIcon, UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
+import SidebarComponent from "../component";
 import UserSidebar from "../user";
 
 const FullSidebar = () => {
@@ -15,7 +17,12 @@ const FullSidebar = () => {
         </div>
       </Link>
       <hr className="w-full h-[1px] bg-slate-800" />
-      <UserSidebar />
+      <UserSidebar className="bg-slate-900" />
+      <hr className="w-full h-[1px] bg-slate-800" />
+      <div className="flex flex-col">
+        <SidebarComponent title="Users" icon={<UserIcon className="w-4 h-4" />} href="/dashboard/users" />
+        <SidebarComponent title="Blacklists" icon={<TrashIcon className="w-4 h-4" />} href="/dashboard/blacklists" />
+      </div>
     </div>
   );
 };

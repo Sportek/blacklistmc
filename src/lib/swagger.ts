@@ -51,7 +51,7 @@ export const getApiDocs = async () => {
               email: { type: "string" },
               userId: { type: "string" },
               user: { $ref: "#/components/schemas/User" },
-              role: { type: "string", enum: ["USER", "MODERATOR", "ADMIN"] },
+              role: { type: "string", enum: ["USER", "SUPERVISOR", "SUPPORT", "ADMIN"] },
               createdAt: { type: "string", format: "date-time" },
               updatedAt: { type: "string", format: "date-time" },
             },

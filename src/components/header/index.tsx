@@ -29,7 +29,7 @@ const Header = () => {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-60">
-          {account?.role === "ADMIN" || account?.role === "MODERATOR" ? (
+          {account?.role === "ADMIN" || account?.role === "SUPPORT" || account?.role === "SUPERVISOR" ? (
             <>
               <DropdownMenuItem
                 className="hover:cursor-pointer text-sm font-semibold"

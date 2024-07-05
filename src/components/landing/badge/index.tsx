@@ -9,7 +9,7 @@ const Badge = ({ icon, label, className }: BadgeProps) => {
   return (
     <div
       className={cn(
-        "rounded-md text-sm font-semibold gap-2 flex flex-row items-center px-2 w-fit h-fit border border-white border-opacity-40",
+        "rounded-md text-sm font-semibold gap-1 flex flex-row items-center px-2 w-fit h-fit border border-white border-opacity-40",
         className
       )}
     >
