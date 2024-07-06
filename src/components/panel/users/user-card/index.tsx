@@ -23,9 +23,9 @@ const UserCard = ({ user, userAccount }: UserCardProps) => {
     <Card className="w-full flex flex-row gap-2 hover:bg-opacity-10 duration-75 transition-all ease-in-out items-center">
       <UserAvatar username={user.username} imageUrl={user.imageUrl} className="w-12 h-12" />
       <div className="flex flex-row gap-2 p-2 w-full justify-between">
-        <div className="flex flex-col gap-2">
-          <div className="text-2xl font-semibold">{user.displayName}</div>
+        <div className="flex flex-row gap-2 items-center">
           <RoleBadge role={userAccount?.role} />
+          <div className="text-xl font-semibold">{user.displayName}</div>
         </div>
         {account?.role === AccountRole.ADMIN && userAccount && userAccount.id !== account.id && (
           <DropdownMenu>
