@@ -16,7 +16,7 @@ const Users = async () => {
         <div className="text-2xl font-semibold w-full">Users</div>
         <div className="flex flex-col gap-2">
           {accountUserMap.map((user) => (
-            <UserCard key={user.user.id} user={user.user} account={user.account} />
+            <UserCard key={user.user.id} user={user.user} userAccount={user.account} />
           ))}
         </div>
       </div>
