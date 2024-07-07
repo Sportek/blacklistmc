@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { updateOrCreateUserInfo } from "@/http/discord-requests";
 import prisma from "@/lib/prisma";
+import { User } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ZodError } from "zod";
 import { userSchema } from "./userSchema";
@@ -26,6 +27,18 @@ import { userSchema } from "./userSchema";
  *         schema:
  *           type: boolean
  *         description: Whether to return the users in random order
+ *       - name: page
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: The page number
+ *       - name: search
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: The search query
  *     responses:
  *       200:
  *         description: The users
@@ -43,18 +56,29 @@ import { userSchema } from "./userSchema";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") ?? "10");
-  const random = searchParams.get("random") === "true" ? true : false;
+  const random = searchParams.get("random") === "true";
+  const page = parseInt(searchParams.get("page") ?? "1");
+  const search = searchParams.get("search") ?? "";
 
-  let users;
+  const skip = (page - 1) * limit;
+
+  let users: User[] = [];
   if (random) {
-    users = await prisma.$queryRaw`SELECT * FROM "User" ORDER BY RANDOM() LIMIT ${limit}`;
+    users = await prisma.$queryRaw`SELECT * FROM "User" WHERE "displayName" ILIKE ${`%${search}%`} ORDER BY RANDOM()`;
   } else {
     users = await prisma.user.findMany({
-      take: limit,
+      where: {
+        displayName: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
     });
   }
 
-  return NextResponse.json(users);
+  const paginatedUsers = users.slice(skip, skip + limit);
+
+  return NextResponse.json(paginatedUsers);
 }
 
 /**

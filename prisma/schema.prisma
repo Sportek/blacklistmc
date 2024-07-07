@@ -33,8 +33,10 @@ enum BlacklistVoteState {
 }
 
 enum AccountRole {
+  UNKNOWN
   USER
-  MODERATOR
+  SUPPORT
+  SUPERVISOR
   ADMIN
 }
 
