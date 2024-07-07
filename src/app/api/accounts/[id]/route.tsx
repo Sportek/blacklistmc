@@ -1,0 +1,36 @@
+import prisma from "@/lib/prisma";
+import { AccountRole } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { updateAccountValidator } from "./accountValidator";
+
+interface AccountParams {
+  params: {
+    id: string;
+  };
+}
+
+export async function GET(req: NextRequest, { params }: AccountParams) {
+  const account = await prisma.account.findUnique({
+    where: {
+      userId: params.id,
+    },
+  });
+
+  return NextResponse.json(account);
+}
+
+export async function PATCH(req: NextRequest, { params }: AccountParams) {
+  const body = await req.json();
+  const { role } = updateAccountValidator.parse(body);
+
+  const account = await prisma.account.update({
+    where: {
+      userId: params.id,
+    },
+    data: {
+      role: role as AccountRole,
+    },
+  });
+
+  return NextResponse.json(account);
+}

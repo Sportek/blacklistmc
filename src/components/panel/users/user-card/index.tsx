@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 import RoleBadge from "@/components/user/role-badge";
 import { useAuth } from "@/contexts/useAuth";
 import { Account, AccountRole, User } from "@prisma/client";
@@ -18,6 +19,29 @@ interface UserCardProps {
 }
 const UserCard = ({ user, userAccount }: UserCardProps) => {
   const { account } = useAuth();
+  const { toast } = useToast();
+
+  const handleRoleChange = async (role: AccountRole) => {
+    if (!userAccount) return;
+    const response = await fetch(`/api/accounts/${user.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    });
+
+    if (!response.ok) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du changement de rôle",
+      });
+    }
+
+    userAccount.role = role;
+
+    toast({
+      title: "Succès",
+      description: "Le rôle a été changé avec succès!",
+    });
+  };
 
   return (
     <Card className="w-full flex flex-row gap-2 hover:bg-opacity-10 duration-75 transition-all ease-in-out items-center">
@@ -34,7 +58,11 @@ const UserCard = ({ user, userAccount }: UserCardProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {Object.values(AccountRole).map((role) => (
-                <DropdownMenuItem key={role} className="text-white hover:text-white hover:cursor-pointer">
+                <DropdownMenuItem
+                  key={role}
+                  className="text-white hover:text-white hover:cursor-pointer"
+                  onClick={() => handleRoleChange(role)}
+                >
                   <RoleBadge role={role} />
                 </DropdownMenuItem>
               ))}

@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/useAuth";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <html lang="fr">
+        <Toaster />
         <body
           className={cn(
             "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-clip",
