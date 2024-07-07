@@ -5,6 +5,9 @@ const RecentBlacklist = async () => {
   const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
     cache: "no-store",
   });
+
+  if (!request.ok) return null;
+
   const blacklists = (await request.json()) as (Blacklist & {
     user: User;
   })[];

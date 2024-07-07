@@ -52,9 +52,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkAuthetification = useCallback(async () => {
     try {
+      const token = getToken();
+
+      if (!token) return;
+
       const response = await fetch("/api/auth/me", {
         headers: {
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

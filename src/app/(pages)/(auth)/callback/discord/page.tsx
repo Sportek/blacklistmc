@@ -5,20 +5,27 @@ import BaseSpacing from "@/components/base";
 import { useAuth } from "@/contexts/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const DiscordCallback = () => {
   const router = useRouter();
   const { checkAuthetification, saveToken } = useAuth();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
     const code = new URLSearchParams(window.location.search).get("code");
     if (!code) router.push("/");
 
     const exchangeCodeForToken = async () => {
+      console.log("send a request");
+
       try {
         const response = await fetch("/api/auth/callback/discord?code=" + code);
-        if (!response.ok) throw new Error("Failed to exchange code for token");
+        if (!response.ok) {
+          console.log(await response.json());
+          throw new Error("Failed to exchange code for token");
+        }
         const data: DiscordCallbackResponse = await response.json();
         saveToken(data.token);
         await checkAuthetification();
@@ -29,6 +36,7 @@ const DiscordCallback = () => {
       }
     };
 
+    hasFetched.current = true;
     exchangeCodeForToken();
   }, [router, saveToken, checkAuthetification]);
 
