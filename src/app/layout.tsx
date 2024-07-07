@@ -24,13 +24,13 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <html lang="fr">
-        <Toaster />
         <body
           className={cn(
             "bg-background antialiased text-white h-full min-h-screen w-full flex flex-col items-center overflow-x-clip",
             gabarito.className
           )}
         >
+          <Toaster />
           {children}
         </body>
       </html>
