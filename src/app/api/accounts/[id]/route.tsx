@@ -1,3 +1,4 @@
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
 import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,17 +21,24 @@ export async function GET(req: NextRequest, { params }: AccountParams) {
 }
 
 export async function PATCH(req: NextRequest, { params }: AccountParams) {
-  const body = await req.json();
-  const { role } = updateAccountValidator.parse(body);
+  try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
+    const body = await req.json();
+    const { role } = updateAccountValidator.parse(body);
 
-  const account = await prisma.account.update({
-    where: {
-      userId: params.id,
-    },
-    data: {
-      role: role as AccountRole,
-    },
-  });
+    const account = await prisma.account.update({
+      where: {
+        userId: params.id,
+      },
+      data: {
+        role: role as AccountRole,
+      },
+    });
 
-  return NextResponse.json(account);
+    return NextResponse.json(account);
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+  }
 }

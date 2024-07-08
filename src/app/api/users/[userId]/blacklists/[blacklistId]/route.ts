@@ -1,5 +1,7 @@
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { NextRequest } from "next/server";
+import { AccountRole } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { updateBlacklistSchema } from "../blacklistSchema";
 
 interface UsersUserIdBlacklistsBlacklistIdParams {
@@ -107,12 +109,19 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *                   type: string
  */
 export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
-  const user = await prisma.user.findUnique({ where: { id: params.userId } });
-  if (!user) {
-    return Response.json({ error: "User not found" }, { status: 404 });
+  try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
+    const user = await prisma.user.findUnique({ where: { id: params.userId } });
+    if (!user) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
+    await prisma.blacklist.delete({ where: { id: Number(params.blacklistId) } });
+    return Response.json(null, { status: 204 });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
   }
-  await prisma.blacklist.delete({ where: { id: Number(params.blacklistId) } });
-  return Response.json(null, { status: 204 });
 }
 
 /**
@@ -203,28 +212,34 @@ export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklists
  *                   type: string
  */
 export async function PATCH(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
-  const { title, description, askedByUserId, expireAt, channelId } = await req.json();
-  const validated = updateBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
-  if (!validated.success) {
-    const errorMessages = validated.error.flatten().fieldErrors;
-    return Response.json({ error: "Invalid data", details: errorMessages }, { status: 400 });
-  }
-
-  if (askedByUserId) {
-    const askedByUser = await prisma.user.findUnique({ where: { id: askedByUserId } });
-    if (!askedByUser) {
-      return Response.json({ error: "Asked by user not found" }, { status: 404 });
+  try {
+    const { title, description, askedByUserId, expireAt, channelId } = await req.json();
+    const validated = updateBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
+    if (!validated.success) {
+      const errorMessages = validated.error.flatten().fieldErrors;
+      return Response.json({ error: "Invalid data", details: errorMessages }, { status: 400 });
     }
 
-    await prisma.blacklist.update({
-      where: { id: Number(params.blacklistId) },
-      data: { askedByUserId },
-    });
-  }
+    if (askedByUserId) {
+      const askedByUser = await prisma.user.findUnique({ where: { id: askedByUserId } });
+      if (!askedByUser) {
+        return Response.json({ error: "Asked by user not found" }, { status: 404 });
+      }
 
-  const blacklist = await prisma.blacklist.update({
-    where: { id: Number(params.blacklistId) },
-    data: { title, description, expireAt, channelId },
-  });
-  return Response.json(blacklist, { status: 200 });
+      await prisma.blacklist.update({
+        where: { id: Number(params.blacklistId) },
+        data: { askedByUserId },
+      });
+    }
+
+    const blacklist = await prisma.blacklist.update({
+      where: { id: Number(params.blacklistId) },
+      data: { title, description, expireAt, channelId },
+    });
+    return Response.json(blacklist, { status: 200 });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+  }
 }
