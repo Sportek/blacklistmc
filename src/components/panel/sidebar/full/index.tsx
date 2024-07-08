@@ -1,5 +1,5 @@
 import Logo from "@/public/blacklistmc/logo.svg";
-import { TrashIcon, UserIcon } from "@heroicons/react/24/solid";
+import { KeyIcon, TrashIcon, UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import SidebarComponent from "../component";
@@ -22,6 +22,7 @@ const FullSidebar = () => {
       <div className="flex flex-col">
         <SidebarComponent title="Users" icon={<UserIcon className="w-4 h-4" />} href="/dashboard/users" />
         <SidebarComponent title="Blacklists" icon={<TrashIcon className="w-4 h-4" />} href="/dashboard/blacklists" />
+        <SidebarComponent title="Tokens" icon={<KeyIcon className="w-4 h-4" />} href="/dashboard/tokens" />
       </div>
     </div>
   );
