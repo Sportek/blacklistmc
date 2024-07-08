@@ -1,5 +1,7 @@
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { NextRequest } from "next/server";
+import { AccountRole } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 interface UserUserIdGroupParams {
   params: {
@@ -110,17 +112,21 @@ export async function GET(req: NextRequest, { params }: UserUserIdGroupParams) {
  *                   type: string
  */
 export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) {
-  const { userId } = params;
-  const { secondUserId } = await req.json();
-
-  if (!userId || !secondUserId) {
-    return Response.json({ error: "User IDs are required" }, { status: 400 });
-  }
-
   try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
+
+    const { userId } = params;
+    const { secondUserId } = await req.json();
+
+    if (!userId || !secondUserId) {
+      return Response.json({ error: "User IDs are required" }, { status: 400 });
+    }
     const result = await mergeGroups(userId, secondUserId);
     return Response.json(result);
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error(error);
     return Response.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -171,28 +177,36 @@ export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) 
  *                   type: string
  */
 export async function DELETE(req: NextRequest, { params }: UserUserIdGroupParams) {
-  const { userId } = params;
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
 
-  if (!user) return Response.json({ error: "User not found" }, { status: 404 });
-  if (!user.groupId) return Response.json({ error: "User does not belong to a group" }, { status: 404 });
+    const { userId } = params;
+    const user = await prisma.user.findUnique({ where: { id: userId } });
 
-  const groupId = user.groupId;
-  await prisma.user.update({
-    where: { id: userId },
-    data: { groupId: null },
-  });
+    if (!user) return Response.json({ error: "User not found" }, { status: 404 });
+    if (!user.groupId) return Response.json({ error: "User does not belong to a group" }, { status: 404 });
 
-  const groupMembers = await prisma.user.findMany({
-    where: { groupId },
-  });
+    const groupId = user.groupId;
+    await prisma.user.update({
+      where: { id: userId },
+      data: { groupId: null },
+    });
 
-  if (groupMembers.length === 0) {
-    await prisma.userGroup.delete({ where: { id: groupId } });
-    return Response.json({ message: "Group deleted" });
+    const groupMembers = await prisma.user.findMany({
+      where: { groupId },
+    });
+
+    if (groupMembers.length === 0) {
+      await prisma.userGroup.delete({ where: { id: groupId } });
+      return Response.json({ message: "Group deleted" });
+    }
+
+    return Response.json({ message: "User removed from group" });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
   }
-
-  return Response.json({ message: "User removed from group" });
 }
 
 // Helper functions remain same as previously defined

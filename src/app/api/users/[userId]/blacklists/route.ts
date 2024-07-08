@@ -1,5 +1,7 @@
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import { prisma } from "@/lib/prisma";
-import { NextRequest } from "next/server";
+import { AccountRole } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { createBlacklistSchema } from "./blacklistSchema";
 
 interface UsersUserIdBlacklistsParams {
@@ -145,35 +147,42 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *                   type: string
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
-  const { title, description, askedByUserId, expireAt, channelId } = await req.json();
-  const validated = createBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
-  if (!validated.success) {
-    const errorMessages = validated.error.flatten().fieldErrors;
-    return Response.json({ error: "Invalid data", details: errorMessages }, { status: 400 });
-  }
+  try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
+    const { title, description, askedByUserId, expireAt, channelId } = await req.json();
+    const validated = createBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
+    if (!validated.success) {
+      const errorMessages = validated.error.flatten().fieldErrors;
+      return Response.json({ error: "Invalid data", details: errorMessages }, { status: 400 });
+    }
 
-  const userExists = await prisma.user.findUnique({ where: { id: params.userId } });
-  if (!userExists) {
-    return Response.json({ error: "User not found" }, { status: 404 });
-  }
+    const userExists = await prisma.user.findUnique({ where: { id: params.userId } });
+    if (!userExists) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
 
-  const askedByUser = await prisma.user.findUnique({ where: { id: askedByUserId } });
-  if (!askedByUser) {
-    return Response.json({ error: "Asked by user not found" }, { status: 404 });
-  }
+    const askedByUser = await prisma.user.findUnique({ where: { id: askedByUserId } });
+    if (!askedByUser) {
+      return Response.json({ error: "Asked by user not found" }, { status: 404 });
+    }
 
-  const blacklist = await prisma.blacklist.create({
-    data: {
-      title,
-      description,
-      askedByUser: { connect: { id: askedByUserId } },
-      channelId,
-      expireAt: expireAt ? new Date(expireAt) : null,
-      user: {
-        connect: { id: params.userId },
+    const blacklist = await prisma.blacklist.create({
+      data: {
+        title,
+        description,
+        askedByUser: { connect: { id: askedByUserId } },
+        channelId,
+        expireAt: expireAt ? new Date(expireAt) : null,
+        user: {
+          connect: { id: params.userId },
+        },
       },
-    },
-  });
+    });
 
-  return Response.json(blacklist, { status: 201 });
+    return Response.json(blacklist, { status: 201 });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+  }
 }

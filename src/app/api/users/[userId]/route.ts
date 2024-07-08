@@ -1,5 +1,7 @@
 import { updateOrCreateUserInfo } from "@/http/discord-requests";
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
+import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UsersIdParams {
@@ -84,10 +86,21 @@ export async function GET(req: NextRequest, { params }: UsersIdParams) {
  *               properties:
  *                 error:
  *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 export async function DELETE(req: NextRequest, { params }: UsersIdParams) {
-  await prisma.user.delete({ where: { id: params.userId } });
-  return NextResponse.json({ message: "User deleted" });
+  try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
+    await prisma.user.delete({ where: { id: params.userId } });
+    return NextResponse.json({ message: "User deleted" });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+  }
 }
 
 /**
@@ -120,8 +133,19 @@ export async function DELETE(req: NextRequest, { params }: UsersIdParams) {
  *               properties:
  *                 error:
  *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 export async function POST(req: NextRequest, { params }: UsersIdParams) {
-  const userInfo = await updateOrCreateUserInfo(params.userId);
-  return NextResponse.json(userInfo);
+  try {
+    verifyRoleRequired(AccountRole.ADMIN, req);
+    const userInfo = await updateOrCreateUserInfo(params.userId);
+    return NextResponse.json(userInfo);
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+  }
 }

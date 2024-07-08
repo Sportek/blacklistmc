@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { updateOrCreateUserInfo } from "@/http/discord-requests";
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
+import { AccountRole, User } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ZodError } from "zod";
 import { userSchema } from "./userSchema";
@@ -128,6 +129,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
+    await verifyRoleRequired(AccountRole.ADMIN, req);
     const body = await req.json();
     const { id } = userSchema.parse(body);
     const userInfo = await updateOrCreateUserInfo(id);
@@ -141,6 +143,9 @@ export async function POST(req: NextRequest) {
       if (error.code === "P2002") {
         return NextResponse.json({ error: "User already exists" }, { status: 400 });
       }
+    }
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
     }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

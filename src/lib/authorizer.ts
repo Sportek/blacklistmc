@@ -1,6 +1,6 @@
 import { AccountRole } from "@prisma/client";
 import jwt from "jsonwebtoken";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import prisma from "./prisma";
 
 const getTokenFromCookie = (request: NextRequest): string | null => {
@@ -66,6 +66,15 @@ export const hasAtLeastRole = (requiredRole: AccountRole, userRole: AccountRole)
 
 export const verifyRoleRequired = async (role: AccountRole, request: NextRequest) => {
   const session = await getSession(request);
-  if (!session) throw new NextResponse("Unauthorized", { status: 401 });
-  if (!hasAtLeastRole(role, session.role)) throw new NextResponse("Forbidden", { status: 403 });
+  if (!session) throw new AuthorizationError("Unauthorized", 401);
+  if (!hasAtLeastRole(role, session.role)) throw new AuthorizationError("Forbidden", 403);
 };
+
+export class AuthorizationError extends Error {
+  status: number;
+  constructor(title: string, status: number) {
+    super(title);
+    this.name = title;
+    this.status = status;
+  }
+}
