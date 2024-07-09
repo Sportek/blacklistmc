@@ -7,7 +7,7 @@ import UserSidebar from "../user";
 
 const FullSidebar = () => {
   return (
-    <div className="w-full max-w-64 bg-slate-950 h-screen flex flex-col">
+    <div className="w-full sm:max-w-64 bg-slate-950 sm:h-screen flex flex-col">
       <Link href="/">
         <div className="flex gap-4 items-center p-4">
           <Image src={Logo} alt="Logo" width={32} height={32} />
@@ -16,13 +16,13 @@ const FullSidebar = () => {
           </div>
         </div>
       </Link>
-      <hr className="w-full h-[1px] bg-slate-800" />
-      <UserSidebar className="bg-slate-900" />
-      <hr className="w-full h-[1px] bg-slate-800" />
-      <div className="flex flex-col">
-        <SidebarComponent title="Users" icon={<UserIcon className="w-4 h-4" />} href="/dashboard/users" />
-        <SidebarComponent title="Blacklists" icon={<TrashIcon className="w-4 h-4" />} href="/dashboard/blacklists" />
-        <SidebarComponent title="Tokens" icon={<KeyIcon className="w-4 h-4" />} href="/dashboard/tokens" />
+      <hr className="w-full h-[1px] bg-slate-800 sm:block hidden" />
+      <UserSidebar className="bg-slate-900 sm:block hidden" />
+      <hr className="w-full h-[1px] bg-slate-800 sm:block hidden" />
+      <div className="flex sm:flex-col gap-2 sm:gap-0 sm:bg-transparent bg-slate-900">
+        <SidebarComponent title="Users" icon={<UserIcon className="w-6 h-6" />} href="/dashboard/users" />
+        <SidebarComponent title="Blacklists" icon={<TrashIcon className="w-6 h-6" />} href="/dashboard/blacklists" />
+        <SidebarComponent title="Tokens" icon={<KeyIcon className="w-6 h-6" />} href="/dashboard/tokens" />
       </div>
     </div>
   );

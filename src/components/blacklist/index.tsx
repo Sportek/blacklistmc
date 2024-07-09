@@ -42,7 +42,7 @@ interface BlacklistProps {
 const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {
   return (
     <Link key={blacklist.id} href={`/users/${blacklist.userId}`}>
-      <Card className="p-4 hover:bg-opacity-30 transition-all duration-75 ease-in-out">
+      <Card className="p-4 hover:bg-opacity-30 transition-all duration-75 ease-in-out overflow-clip">
         <div className="flex flex-col items-center justify-center gap-4">
           <UserCard user={user} />
           <div className="flex flex-row gap-4 w-full h-full">
@@ -55,7 +55,7 @@ const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {
             <div className="flex flex-col gap-2">
               <div className="text-xl font-extrabold">{blacklist.title}</div>
               <div className="text-sm font-normal flex flex-row gap-2 items-center">
-                <div>
+                <div className="whitespace-break-spaces flex-grow">
                   {new Date(blacklist.createdAt).toLocaleDateString("fr-FR", {
                     day: "2-digit",
                     month: "long",
@@ -64,7 +64,7 @@ const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {
                 </div>
                 <ArrowLongRightIcon className="w-4 h-4" />
                 {blacklist.expireAt ? (
-                  <div>
+                  <div className="whitespace-break-spaces flex-grow">
                     {new Date(blacklist.expireAt).toLocaleDateString("fr-FR", {
                       day: "2-digit",
                       month: "long",
@@ -72,7 +72,7 @@ const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {
                     })}
                   </div>
                 ) : (
-                  <div>Définitivement</div>
+                  <div className="whitespace-break-spaces flex-grow">Définitivement</div>
                 )}
               </div>
               {isBlacklistExpired(blacklist) ? (
