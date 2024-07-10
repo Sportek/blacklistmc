@@ -29,6 +29,20 @@ const UserPagination = ({ maxPage }: UserPaginationProps) => {
     });
   }, [page, search, nElement, router, maxPage]);
 
+
+  const selectPageIcon = (goToPage: number) => {
+    return (
+      <PaginationItem key={goToPage} className="sm:block hidden" onClick={() => setPage(goToPage)}>
+        <PaginationLink
+          isActive={page === goToPage}
+          className={cn(page === goToPage ? "bg-white" : "bg-slate-400", "cursor-pointer")}
+      >
+        {goToPage}
+        </PaginationLink>
+      </PaginationItem>
+    );
+  };
+
   return (
     <div className="flex flex-row gap-2 text-black">
       <Pagination>
@@ -49,17 +63,10 @@ const UserPagination = ({ maxPage }: UserPaginationProps) => {
           </div>
 
           <div className="flex flex-row gap-1">
-            {Array.from({ length: maxPage }, (_, index) => (
-              <PaginationItem key={index} onClick={() => setPage(index + 1)}>
-                <PaginationLink
-                  isActive={page === index + 1}
-                  className={cn(page === index + 1 ? "bg-white" : "bg-slate-400", "cursor-pointer")}
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            )).slice(0, 2)}
-            <PaginationItem>
+            {(page - 1) >= 1 ? selectPageIcon(page - 1) : null}
+            {selectPageIcon(page)}
+            {(page + 1) <= maxPage ? selectPageIcon(page + 1) : null}
+            <PaginationItem className="sm:block hidden">
               <PaginationEllipsis className="bg-slate-400 h-full rounded-md w-10" />
             </PaginationItem>
 

@@ -17,7 +17,7 @@ const FullSidebar = () => {
         </div>
       </Link>
       <hr className="w-full h-[1px] bg-slate-800 sm:block hidden" />
-      <UserSidebar className="bg-slate-900 sm:block hidden" />
+      <UserSidebar className="bg-slate-900 sm:flex hidden" />
       <hr className="w-full h-[1px] bg-slate-800 sm:block hidden" />
       <div className="flex sm:flex-col gap-2 sm:gap-0 sm:bg-transparent bg-slate-900">
         <SidebarComponent title="Users" icon={<UserIcon className="w-6 h-6" />} href="/dashboard/users" />

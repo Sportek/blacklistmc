@@ -34,7 +34,7 @@ const Users = async ({ searchParams }: UsersProps) => {
   const maxPage = Math.ceil(userAmount / parseInt(nElement));
 
   return (
-    <div className="w-full flex flex-col gap-2 items-center overflow-y-auto h-screen pt-8">
+    <div className="w-full flex flex-col gap-2 items-center overflow-y-auto h-screen pt-8 px-2">
       <div className="max-w-3xl w-full flex flex-col gap-4">
         <div className="text-2xl font-semibold w-full">Utilisateurs</div>
         <UserPagination maxPage={maxPage} />
