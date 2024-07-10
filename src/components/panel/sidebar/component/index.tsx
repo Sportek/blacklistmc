@@ -22,7 +22,7 @@ const SidebarComponent = ({ title, icon, href }: SidebarComponentProps) => {
         )}
       >
         {icon}
-        <div className="text-white text-xl font-semibold">{title}</div>
+        <div className="text-white text-xl font-semibold sm:block hidden">{title}</div>
       </div>
     </Link>
   );

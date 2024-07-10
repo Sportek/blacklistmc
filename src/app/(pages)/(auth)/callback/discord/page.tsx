@@ -18,12 +18,9 @@ const DiscordCallback = () => {
     if (!code) router.push("/");
 
     const exchangeCodeForToken = async () => {
-      console.log("send a request");
-
       try {
         const response = await fetch("/api/auth/callback/discord?code=" + code);
         if (!response.ok) {
-          console.log(await response.json());
           throw new Error("Failed to exchange code for token");
         }
         const data: DiscordCallbackResponse = await response.json();

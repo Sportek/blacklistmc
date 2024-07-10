@@ -6,9 +6,9 @@ interface PanelLayoutProps {
 
 const PanelLayout = ({ children }: PanelLayoutProps) => {
   return (
-    <div className="flex flex-row w-full h-screen flex-grow overflow-hidden">
+    <div className="flex flex-col sm:flex-row w-full h-screen flex-grow overflow-hidden">
       <FullSidebar />
-      <div className="w-full bg-slate-700">{children}</div>
+      <div className="w-full bg-slate-700 h-full min-h-screen">{children}</div>
     </div>
   );
 };

@@ -61,8 +61,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
   params.append("code", code);
   params.append("redirect_uri", process.env.NEXT_PUBLIC_AUTH_DISCORD_REDIRECT_URI);
 
-  console.log("Parameters", params);
-
   try {
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
@@ -119,7 +117,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     return response;
   } catch (error: any) {
-    console.log(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 };
