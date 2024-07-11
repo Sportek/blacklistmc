@@ -60,7 +60,7 @@ const UserPage = async ({ params }: UserPageProps) => {
   const userStatusJson = (await response.json()) as { status: UserStatus };
   return (
     <>
-      <div className="absolute inset-0 z-0 max-h-[100vh] top-[-200px]">
+      <div className="absolute inset-0 z-0 max-h-[100vh] top-[-200px] overflow-x-clip">
         <Gradient />
       </div>
       <BaseSpacing className="z-10 flex flex-col items-center gap-10 max-w-4xl flex-grow">
@@ -75,7 +75,6 @@ const UserPage = async ({ params }: UserPageProps) => {
         </div>
         <div className="flex flex-col md:flex-row gap-10 w-full">
           {(user.UserHistory || []).length > 0 ? (
-            <>
               <div className="flex flex-col gap-4 w-full">
                 <div className="font-bold text-xl">Historique du compte</div>
                 <div className="flex flex-col gap-4"></div>
@@ -85,10 +84,8 @@ const UserPage = async ({ params }: UserPageProps) => {
                     return <UserCard noBadge key={history.id} user={{ ...history, id: user.id } as unknown as User} />;
                   })}
               </div>
-            </>
           ) : null}
           {(user.group?.users || []).length > 0 ? (
-            <>
               <div className="flex flex-col gap-4 w-full">
                 <div className="font-bold text-xl">Doubles comptes répertoriés</div>
                 <div className="flex flex-col gap-4">
@@ -107,7 +104,6 @@ const UserPage = async ({ params }: UserPageProps) => {
                     : null}
                 </div>
               </div>
-            </>
           ) : null}
         </div>
         {user.Blacklist.length > 0 && (

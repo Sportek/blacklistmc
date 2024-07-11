@@ -59,7 +59,7 @@ const Header = () => {
         <Image src={logo} alt="logo" width={25} />
         <div className="text-white text-2xl font-bold">BlacklistMC</div>
       </Link>
-      <div className="flex items-center gap-8">
+      <div className="flex items-center gap-4">
         <Link className="text-white text-lg font-medium" href="">
           Report
         </Link>

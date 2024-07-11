@@ -9,7 +9,7 @@ export default async function Home() {
   return (
     <>
       {/* Background */}
-      <div className="absolute inset-0 max-h-[100vh]">
+      <div className="absolute inset-0 max-h-[100vh] overflow-x-clip">
         <MultipleOrbit className="-z-30" />
         <Gradient className="-z-50" />
       </div>
