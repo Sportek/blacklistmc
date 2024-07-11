@@ -7,7 +7,7 @@ import {
 import { NextRequest } from "next/server";
 import path from "path";
 
-export async function uploadFileToAzure(req: NextRequest, filePrefix: string): Promise<string> {
+export async function uploadFileToAzure(req: NextRequest, filePrefix: string): Promise<{ filePath: string; fileName: string }> {
   const fileName = req.headers.get("x-filename");
   if (!fileName) {
     throw new Error("No filename found in headers (x-filename)");
@@ -36,7 +36,7 @@ export async function uploadFileToAzure(req: NextRequest, filePrefix: string): P
 
   await uploadBufferToAzure(fileBuffer, filePath);
 
-  return filePath;
+  return { filePath, fileName };
 }
 
 export async function uploadBufferToAzure(buffer: Uint8Array, filePath: string, isPublic = false): Promise<string> {

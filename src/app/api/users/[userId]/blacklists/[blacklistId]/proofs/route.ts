@@ -154,15 +154,18 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBl
   }
 
   try {
-    const fileName = await uploadFileToAzure(
+    const file = await uploadFileToAzure(
       req,
       path.posix.join("users", params.userId, "blacklists", params.blacklistId, "proofs")
     );
+
     const proof = await prisma.proof.create({
       data: {
-        url: fileName,
+        url: file.filePath,
+        name: file.fileName,
+        extension: path.extname(file.fileName),
         blacklistId: Number(params.blacklistId),
-        type: getProofType(fileName),
+        type: getProofType(file.fileName),
       },
     });
     return Response.json(proof, { status: 200 });

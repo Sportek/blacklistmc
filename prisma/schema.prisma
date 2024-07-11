@@ -132,6 +132,8 @@ model UserHistory {
 // Représente les preuves de blacklist
 model Proof {
   id          String    @id @default(uuid())
+  name        String
+  extension   String
   isPublic    Boolean   @default(false)
   type        ProofType
   url         String
