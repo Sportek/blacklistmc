@@ -23,6 +23,24 @@ import { NextRequest, NextResponse } from "next/server";
  *           type: string
  *           enum: [asc, desc]
  *         description: The order of the blacklists
+ *       - name: random
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: If true, returns random blacklists
+ *       - name: page
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: The page number for pagination
+ *       - name: search
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: The search term for filtering blacklists by username or display name
  *     responses:
  *       200:
  *         description: The blacklists
@@ -41,6 +59,7 @@ import { NextRequest, NextResponse } from "next/server";
  *               properties:
  *                 error:
  *                   type: string
+ *                   example: Error while fetching blacklists
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
