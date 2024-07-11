@@ -1,3 +1,4 @@
+import DashboardPagination from "@/components/panel/users/paginate";
 import UserPagination from "@/components/panel/users/paginate";
 import UserCard from "@/components/panel/users/user-card";
 import prisma from "@/lib/prisma";
@@ -37,7 +38,7 @@ const Users = async ({ searchParams }: UsersProps) => {
     <div className="w-full flex flex-col gap-2 items-center overflow-y-auto h-screen pt-8 px-2">
       <div className="max-w-3xl w-full flex flex-col gap-4">
         <div className="text-2xl font-semibold w-full">Utilisateurs</div>
-        <UserPagination maxPage={maxPage} />
+        <DashboardPagination maxPage={maxPage} basePath="/dashboard/users" />
         <div className="flex flex-col gap-2">
           {accountUserMap.map((user) => (
             <UserCard key={user.user.id} user={user.user} userAccount={user.account} />
