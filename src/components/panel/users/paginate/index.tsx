@@ -14,10 +14,11 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 
-interface UserPaginationProps {
+interface DashboardPaginationProps {
   maxPage: number;
+  basePath: string;
 }
-const UserPagination = ({ maxPage }: UserPaginationProps) => {
+const DashboardPagination = ({ maxPage, basePath }: DashboardPaginationProps) => {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -25,9 +26,9 @@ const UserPagination = ({ maxPage }: UserPaginationProps) => {
 
   useEffect(() => {
     startTransition(() => {
-      router.push(`/dashboard/users?page=${page}&search=${search}&nElement=${nElement}`);
+      router.push(`${basePath}?page=${page}&search=${search}&nElement=${nElement}`);
     });
-  }, [page, search, nElement, router, maxPage]);
+  }, [page, search, nElement, router, maxPage, basePath]);
 
 
   const selectPageIcon = (goToPage: number) => {
@@ -82,4 +83,4 @@ const UserPagination = ({ maxPage }: UserPaginationProps) => {
   );
 };
 
-export default UserPagination;
+export default DashboardPagination;
