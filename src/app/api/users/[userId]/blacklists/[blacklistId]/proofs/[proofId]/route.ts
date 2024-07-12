@@ -40,10 +40,15 @@ interface UserBlacklistProofParams {
  *       200:
  *         description: The proof
  *         content:
- *           application/octet-stream:
+ *           application/json:
  *             schema:
- *               type: string
- *               format: binary
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   format: uuid
+ *                 isPublic:
+ *                   type: boolean
  *       404:
  *         description: Proof not found
  *         content:
@@ -80,6 +85,82 @@ export async function GET(req: NextRequest, { params }: UserBlacklistProofParams
   return NextResponse.json(proof);
 }
 
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}/proofs/{proofId}:
+ *   put:
+ *     summary: Update a proof
+ *     tags:
+ *       - Proofs
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the blacklist
+ *       - name: proofId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the proof
+ *       - name: isPublic
+ *         in: body
+ *         required: true
+ *         schema:
+ *           type: boolean
+ *         description: The new public state of the proof
+ *     responses:
+ *       200:
+ *         description: The updated proof
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   format: uuid
+ *                 isPublic:
+ *                   type: boolean
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *       400:
+ *         description: isPublic is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: isPublic is required
+ *       500:
+ *         description: Error while updating proof
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Error while updating proof
+ */
 export async function PUT(req: NextRequest, { params }: UserBlacklistProofParams) {
   try {
     const { proofId } = params;
@@ -87,7 +168,7 @@ export async function PUT(req: NextRequest, { params }: UserBlacklistProofParams
     await verifyRoleRequired(AccountRole.SUPPORT, req);
 
     const { isPublic } = await req.json();
-    
+
     if (typeof isPublic !== "boolean") {
       return NextResponse.json({ error: "isPublic is required" }, { status: 400 });
     }
