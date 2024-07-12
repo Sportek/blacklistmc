@@ -1,5 +1,6 @@
+import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { retrieveBufferFromAzure } from "@/utils/file-upload-manager";
+import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 interface UserBlacklistProofParams {
   params: {
@@ -77,4 +78,38 @@ export async function GET(req: NextRequest, { params }: UserBlacklistProofParams
   }
 
   return NextResponse.json(proof);
+}
+
+export async function PUT(req: NextRequest, { params }: UserBlacklistProofParams) {
+  try {
+    const { proofId } = params;
+
+    await verifyRoleRequired(AccountRole.SUPPORT, req);
+
+    const { isPublic } = await req.json();
+    
+    if (typeof isPublic !== "boolean") {
+      return NextResponse.json({ error: "isPublic is required" }, { status: 400 });
+    }
+
+    const proof = await prisma.proof.update({
+      where: {
+        id: proofId,
+      },
+      data: {
+        isPublic,
+      },
+    });
+
+    if (!proof) {
+      return NextResponse.json({ error: "Proof not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(proof);
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ error: "Error while updating proof" }, { status: 500 });
+  }
 }

@@ -1,7 +1,8 @@
 import Card from "@/components/landing/card";
+import { blacklistStatusBadge } from "@/components/panel/blacklists";
 import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
+import { ArrowLongRightIcon, CheckIcon, LockClosedIcon, LockOpenIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -39,18 +40,22 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
         <div className="text-2xl font-semibold w-full">Blacklist</div>
         <Card className="flex flex-col gap-2">
           <div className="text-xl font-semibold">
-            {blacklist.title}{" "}
+            <div className="flex flex-row gap-2 items-center">
+              {blacklistStatusBadge(blacklist.status)}
+              {blacklist.title}{" "}
+            </div>
+          </div>
+          <div className="flex flex-row gap-2 items-center">
+            <div className="flex flex-row items-center gap-2">
+              <Image src={blacklist.user.imageUrl} alt="User" width={32} height={32} className="rounded-full" />
+              <div className="flex flex-row items-center gap-1">
+                <div className="text-lg font-semibold">{blacklist.user.displayName}</div>
+              </div>
+            </div>
             <div className="text-sm font-thin text-white/70 flex flex-row items-center gap-2">
               <div>{blacklist.createdAt.toLocaleDateString()}</div>
               <ArrowLongRightIcon className="w-4 h-4" />
               <div>{blacklist.expireAt?.toLocaleDateString() ?? "Définitif"}</div>
-            </div>
-          </div>
-          <div className="flex flex-row items-center gap-2">
-            <Image src={blacklist.user.imageUrl} alt="User" width={32} height={32} className="rounded-full" />
-            <div className="flex flex-row items-center gap-1">
-              <div className="text-sm font-semibold">{blacklist.user.displayName}</div>
-              <div className="text-xs">@{blacklist.user.username}</div>
             </div>
           </div>
 
@@ -64,6 +69,7 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
             {blacklist.proofs.map((proof) => (
               <Link href={`/dashboard/blacklists/${blacklist.id}/proofs/${proof.id}`} key={proof.id}>
                 <Card className="flex flex-row items-center gap-2">
+                  {proof.isPublic ? <LockOpenIcon className="w-4 h-4" /> : <LockClosedIcon className="w-4 h-4" />}
                   <div>{proof.name}</div>
                 </Card>
               </Link>
