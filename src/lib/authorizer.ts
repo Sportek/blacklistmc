@@ -59,8 +59,8 @@ export const hasAtLeastRole = (requiredRole: AccountRole, userRole: AccountRole)
       level: 500,
     },
   ];
-  const requiredRoleLevel = roles.find((r) => r.name === requiredRole)?.level || 1000; // Pour éviter les fails
-  const userRoleLevel = roles.find((r) => r.name === userRole)?.level || 0;
+  const requiredRoleLevel = roles.find((r) => r.name === requiredRole)?.level ?? 1000; // Pour éviter les fails
+  const userRoleLevel = roles.find((r) => r.name === userRole)?.level ?? 0;
   return userRoleLevel >= requiredRoleLevel;
 };
 
