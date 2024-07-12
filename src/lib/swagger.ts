@@ -51,7 +51,10 @@ export const getApiDocs = async () => {
               email: { type: "string" },
               userId: { type: "string" },
               user: { $ref: "#/components/schemas/User" },
-              role: { type: "string", enum: ["USER", "SUPERVISOR", "SUPPORT", "ADMIN"] },
+              role: {
+                type: "string",
+                enum: ["UNKNOWN", "USER", "SUPPORT", "SUPERVISOR", "ADMIN"],
+              },
               createdAt: { type: "string", format: "date-time" },
               updatedAt: { type: "string", format: "date-time" },
             },
@@ -73,10 +76,16 @@ export const getApiDocs = async () => {
               createdAt: { type: "string", format: "date-time" },
               expireAt: { type: "string", format: "date-time", nullable: true },
               updatedAt: { type: "string", format: "date-time" },
-              status: { type: "string", enum: ["PENDING", "APPROVED", "REJECTED"] },
+              status: {
+                type: "string",
+                enum: ["PENDING", "APPROVED", "REJECTED"],
+              },
               channelId: { type: "string", nullable: true },
               voteEndAt: { type: "string", format: "date-time", nullable: true },
-              voteState: { type: "string", enum: ["PENDING", "EVIDENCE", "BLACKLIST"] },
+              voteState: {
+                type: "string",
+                enum: ["PENDING", "EVIDENCE", "BLACKLIST"],
+              },
               votes: {
                 type: "array",
                 items: { $ref: "#/components/schemas/ModeratorVote" },
@@ -87,7 +96,10 @@ export const getApiDocs = async () => {
             type: "object",
             properties: {
               id: { type: "string" },
-              voteState: { type: "string", enum: ["PENDING", "EVIDENCE", "BLACKLIST"] },
+              voteState: {
+                type: "string",
+                enum: ["PENDING", "EVIDENCE", "BLACKLIST"],
+              },
               blacklistId: { type: "integer" },
               blacklist: { $ref: "#/components/schemas/Blacklist" },
               moderatorId: { type: "string" },
@@ -101,6 +113,8 @@ export const getApiDocs = async () => {
             type: "object",
             properties: {
               id: { type: "string" },
+              name: { type: "string" },
+              extension: { type: "string" },
               isPublic: { type: "boolean" },
               type: { type: "string", enum: ["VIDEO", "IMAGE", "FILE"] },
               url: { type: "string" },
