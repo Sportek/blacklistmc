@@ -68,6 +68,7 @@ interface UserBlacklistProofParams {
  *               properties:
  *                 error:
  *                   type: string
+ *                   example: Error while fetching proof
  */
 export async function GET(req: NextRequest, { params }: UserBlacklistProofParams) {
   const { blacklistId, proofId } = params;
@@ -111,12 +112,17 @@ export async function GET(req: NextRequest, { params }: UserBlacklistProofParams
  *         schema:
  *           type: string
  *         description: The id of the proof
- *       - name: isPublic
- *         in: body
- *         required: true
- *         schema:
- *           type: boolean
- *         description: The new public state of the proof
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isPublic:
+ *                 type: boolean
+ *             required:
+ *               - isPublic
  *     responses:
  *       200:
  *         description: The updated proof
