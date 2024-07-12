@@ -11,6 +11,74 @@ interface LinkRequestParams {
     proofId: string;
   };
 }
+
+/**
+ * @swagger
+ * /api/users/{userId}/blacklists/{blacklistId}/proofs/{proofId}/link:
+ *   get:
+ *     summary: Get temporary signed URL for proof
+ *     tags:
+ *       - Proofs
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The discord id of the user
+ *       - name: blacklistId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the blacklist
+ *       - name: proofId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the proof
+ *     responses:
+ *       200:
+ *         description: Temporary signed URL for the proof
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *       404:
+ *         description: Proof not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Proof not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
 export async function GET(request: NextRequest, { params }: LinkRequestParams) {
   try {
     const proof = await prisma.proof.findUnique({
