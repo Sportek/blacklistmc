@@ -1,5 +1,6 @@
 import {
   BlobSASPermissions,
+  BlobSASSignatureValues,
   BlobServiceClient,
   StorageSharedKeyCredential,
   generateBlobSASQueryParameters,
@@ -77,4 +78,38 @@ export async function retrieveBufferFromAzure(filePath: string) {
 
   const blob = await blockBlobClient.download();
   return blob.readableStreamBody;
+}
+
+
+export async function generateTemporarySasToken(filePath: string, expiresInHours: number, ipAddress?: string) {
+  const sharedKeyCredential = new StorageSharedKeyCredential(
+    process.env.AZURE_STORAGE_ACCOUNT_NAME,
+    process.env.AZURE_STORAGE_ACCOUNT_KEY
+  );
+
+  const sasOptions: BlobSASSignatureValues = {
+    containerName: process.env.AZURE_STORAGE_CONTAINER_NAME,
+    blobName: filePath,
+    permissions: BlobSASPermissions.parse("r"),
+    startsOn: new Date(),
+    expiresOn: new Date(new Date().setHours(new Date().getHours() + expiresInHours)),
+    ipRange: ipAddress ? { start: ipAddress, end: ipAddress } : undefined,
+  };
+
+  return generateBlobSASQueryParameters(sasOptions, sharedKeyCredential).toString();
+}
+
+export async function getTemporaryBlobUrlWithSasToken(filePath: string, expiresInHours: number = 3, ipAddress?: string) {
+  const sasToken = await generateTemporarySasToken(filePath, expiresInHours, ipAddress);
+  const blobServiceClient = new BlobServiceClient(
+    `https://${process.env.AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
+    new StorageSharedKeyCredential(
+      process.env.AZURE_STORAGE_ACCOUNT_NAME,
+      process.env.AZURE_STORAGE_ACCOUNT_KEY
+    )
+  );
+  const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
+  const blockBlobClient = containerClient.getBlockBlobClient(filePath);
+
+  return `${blockBlobClient.url}?${sasToken}`;
 }

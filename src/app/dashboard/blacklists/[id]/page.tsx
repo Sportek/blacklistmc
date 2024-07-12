@@ -1,8 +1,9 @@
 import Card from "@/components/landing/card";
 import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-import { ArrowLongRightIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
+import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface BlacklistPageProps {
@@ -31,11 +32,6 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
   if (!blacklist) {
     return notFound();
   }
-
-
-
-
-
 
   return (
     <div className="w-full flex flex-col gap-2 items-center overflow-y-auto h-screen pt-8 px-2">
@@ -66,9 +62,11 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
           <div className="flex flex-col gap-2">
             <div className="text-lg font-semibold">Différentes preuves ({blacklist.proofs.length})</div>
             {blacklist.proofs.map((proof) => (
-              <Card key={proof.id} className="flex flex-row items-center gap-2">
-                <div>{proof.name}</div>
-              </Card>
+              <Link href={`/dashboard/blacklists/${blacklist.id}/proofs/${proof.id}`} key={proof.id}>
+                <Card className="flex flex-row items-center gap-2">
+                  <div>{proof.name}</div>
+                </Card>
+              </Link>
             ))}
           </div>
 
