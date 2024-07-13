@@ -19,9 +19,8 @@ interface UsersUserIdBlacklistsBlacklistIdParams {
  *       - Blacklists
  *     parameters:
  *       - name: blacklistId
- *         schema:
- *           type: string
- *         description: The id of the blacklist
+ *         in: path
+ *         required: true
  *         schema:
  *           type: string
  *         description: The id of the blacklist
@@ -73,9 +72,6 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *         schema:
  *           type: string
  *         description: The id of the blacklist
- *         schema:
- *           type: string
- *         description: The id of the blacklist
  *     responses:
  *       204:
  *         description: No content, successfully deleted
@@ -122,10 +118,6 @@ export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklists
  *     tags:
  *       - Blacklists
  *     parameters:
- *       - name: blacklistId
- *         schema:
- *           type: string
- *         description: The id of the blacklist
  *       - name: blacklistId
  *         in: path
  *         required: true

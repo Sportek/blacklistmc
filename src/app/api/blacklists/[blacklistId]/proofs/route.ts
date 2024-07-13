@@ -29,12 +29,6 @@ const getProofType = (fileName: string): ProofType => {
  *     tags:
  *       - Proofs
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true
@@ -51,7 +45,7 @@ const getProofType = (fileName: string): ProofType => {
  *               items:
  *                 $ref: "#/components/schemas/Proof"
  *       404:
- *         description: User or blacklist not found
+ *         description: Blacklist not found
  *         content:
  *           application/json:
  *             schema:
@@ -59,7 +53,7 @@ const getProofType = (fileName: string): ProofType => {
  *               properties:
  *                 error:
  *                   type: string
- *                   example: User not found
+ *                   example: Blacklist not found
  *       500:
  *         description: Error while fetching proofs
  *         content:
@@ -88,12 +82,6 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *     tags:
  *       - Proofs
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true
@@ -119,7 +107,7 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *             schema:
  *               $ref: "#/components/schemas/Proof"
  *       404:
- *         description: User or blacklist not found
+ *         description: Blacklist not found
  *         content:
  *           application/json:
  *             schema:

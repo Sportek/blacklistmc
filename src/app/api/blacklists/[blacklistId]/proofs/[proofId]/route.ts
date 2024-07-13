@@ -18,10 +18,6 @@ interface UserBlacklistProofParams {
  *       - Proofs
  *     parameters:
  *       - name: blacklistId
- *         schema:
- *           type: string
- *         description: The id of the blacklist
- *       - name: proofId
  *         in: path
  *         required: true
  *         schema:
@@ -147,6 +143,16 @@ export async function GET(req: NextRequest, { params }: UserBlacklistProofParams
  *                 error:
  *                   type: string
  *                   example: isPublic is required
+ *       404:
+ *         description: Proof not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Proof not found
  *       500:
  *         description: Error while updating proof
  *         content:

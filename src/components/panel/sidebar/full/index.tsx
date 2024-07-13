@@ -1,9 +1,10 @@
 import Logo from "@/public/blacklistmc/logo.svg";
-import { KeyIcon, TrashIcon, UserIcon } from "@heroicons/react/24/solid";
+import { FlagIcon, KeyIcon, TrashIcon, UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import SidebarComponent from "../component";
 import UserSidebar from "../user";
+import { ClipboardIcon } from "@heroicons/react/24/outline";
 
 const FullSidebar = () => {
   return (
@@ -23,6 +24,7 @@ const FullSidebar = () => {
         <SidebarComponent title="Users" icon={<UserIcon className="w-6 h-6" />} href="/dashboard/users" />
         <SidebarComponent title="Blacklists" icon={<TrashIcon className="w-6 h-6" />} href="/dashboard/blacklists" />
         <SidebarComponent title="Tokens" icon={<KeyIcon className="w-6 h-6" />} href="/dashboard/tokens" />
+        <SidebarComponent title="Reasons" icon={<FlagIcon className="w-6 h-6" />} href="/dashboard/reasons" />
       </div>
     </div>
   );
