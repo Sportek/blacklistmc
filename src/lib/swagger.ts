@@ -69,6 +69,8 @@ export const getApiDocs = async () => {
               askedByUser: { $ref: "#/components/schemas/User" },
               title: { type: "string", nullable: true },
               description: { type: "string", nullable: true },
+              reasonId: { type: "string", nullable: true },
+              reason: { $ref: "#/components/schemas/Reason", nullable: true },
               proofs: {
                 type: "array",
                 items: { $ref: "#/components/schemas/Proof" },
@@ -124,6 +126,19 @@ export const getApiDocs = async () => {
               updatedAt: { type: "string", format: "date-time" },
             },
           },
+          Reason: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              name: { type: "string" },
+              blacklists: {
+                type: "array",
+                items: { $ref: "#/components/schemas/Blacklist" },
+              },
+              createdAt: { type: "string", format: "date-time" },
+              updatedAt: { type: "string", format: "date-time" },
+            },
+          },
           UserHistory: {
             type: "object",
             properties: {
@@ -134,6 +149,7 @@ export const getApiDocs = async () => {
               displayName: { type: "string" },
               username: { type: "string" },
               createdAt: { type: "string", format: "date-time" },
+              updatedAt: { type: "string", format: "date-time" },
             },
           },
           UserGroup: {
@@ -148,7 +164,6 @@ export const getApiDocs = async () => {
               updatedAt: { type: "string", format: "date-time" },
             },
           },
-          // Ajouter uniquement les schémas nécessaires pour la documentation de cette route
           DiscordUser: {
             type: "object",
             properties: {
@@ -170,6 +185,7 @@ export const getApiDocs = async () => {
               scope: { type: "string" },
             },
           },
+          // Ajoutez d'autres schémas ici si nécessaire
         },
       },
       security: [{ BearerAuth: [] }],

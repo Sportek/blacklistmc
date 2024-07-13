@@ -125,7 +125,7 @@ export async function GET(req: NextRequest, { params }: VoteParams) {
  *             schema:
  *               $ref: "#/components/schemas/ModeratorVote"
  *       404:
- *         description: Blacklist or Voter not found
+ *         description: Blacklist or voter not found
  *         content:
  *           application/json:
  *             schema:
@@ -133,7 +133,7 @@ export async function GET(req: NextRequest, { params }: VoteParams) {
  *               properties:
  *                 error:
  *                   type: string
- *                   example: Blacklist not found
+ *                   example: Blacklist or voter not found
  *       400:
  *         description: Blacklist is not pending or vote state does not allow new votes
  *         content:
@@ -143,7 +143,7 @@ export async function GET(req: NextRequest, { params }: VoteParams) {
  *               properties:
  *                 error:
  *                   type: string
- *                   example: Blacklist is not pending
+ *                   example: Blacklist is not pending or vote state does not allow new votes
  *       403:
  *         description: Voter not allowed
  *         content:
