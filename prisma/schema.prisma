@@ -53,6 +53,15 @@ model Account {
   updatedAt DateTime @updatedAt @db.Timestamp(3)
 }
 
+model Reason {
+  id        String   @id @default(uuid())
+  name      String
+  blacklists Blacklist[]
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @updatedAt @db.Timestamp(3)
+}
+
+
 // Représente les informations du blacklist
 model Blacklist {
   id     Int    @id @default(autoincrement())
@@ -64,6 +73,8 @@ model Blacklist {
 
   title       String?         @db.VarChar(255)
   description String?         @db.Text
+  reasonId    String?
+  reason      Reason?         @relation(fields: [reasonId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   proofs      Proof[]         @relation("BlacklistProofs")
   createdAt   DateTime        @default(now()) @db.Timestamp(3)
   expireAt    DateTime?
