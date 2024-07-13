@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const createBlacklistSchema = z.object({
-  title: z.string(),
-  description: z.string(),
+  title: z.string().optional(),
+  description: z.string().optional(),
   askedByUserId: z.string(),
   expireAt: z.preprocess((arg: unknown) => {
     if (typeof arg === "string" || arg instanceof String) {

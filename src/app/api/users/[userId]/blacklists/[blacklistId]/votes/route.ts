@@ -204,6 +204,29 @@ export async function POST(req: NextRequest, { params }: VoteParams) {
     const roleRequiredToVote = blacklist.voteState === BlacklistVoteState.PENDING ? AccountRole.SUPPORT : AccountRole.SUPERVISOR;
     if(!hasAtLeastRole(roleRequiredToVote, voterAccount.role)) return NextResponse.json({ error: "Voter not allowed" }, { status: 403 });
 
+
+    const hasAlreadyVoted = await prisma.moderatorVote.findFirst({
+      where: {
+        moderatorId: voterAccount.userId,
+        blacklistId: blacklist.id,
+      },
+    });
+
+    if(hasAlreadyVoted) {
+
+      const updateVote = await prisma.moderatorVote.update({
+        where: {
+          id: hasAlreadyVoted.id,
+        },
+        data: {
+          vote,
+        },
+      });
+
+      return NextResponse.json(updateVote);
+    };
+
+
     const createdVote = await prisma.moderatorVote.create({
       data: {
         vote,
