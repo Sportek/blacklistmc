@@ -5,25 +5,18 @@ import { NextRequest, NextResponse } from "next/server";
 
 interface VoteParams {
   params: {
-    userId: string;
     blacklistId: string;
   };
 }
 
 /**
  * @swagger
- * /api/users/{userId}/blacklists/{blacklistId}/votes:
+ * /api/blacklists/{blacklistId}/votes:
  *   get:
  *     summary: Get all votes for a blacklist
  *     tags:
  *       - Blacklists
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true
@@ -101,18 +94,12 @@ export async function GET(req: NextRequest, { params }: VoteParams) {
 
 /**
  * @swagger
- * /api/users/{userId}/blacklists/{blacklistId}/votes:
+ * /api/blacklists/{blacklistId}/votes:
  *   post:
  *     summary: Add a vote to a blacklist
  *     tags:
  *       - Blacklists
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true

@@ -20,7 +20,7 @@ const getTokenFromHeader = (request: NextRequest): string | null => {
 };
 
 export const getSession = async (request: NextRequest) => {
-  const token = getTokenFromCookie(request) || getTokenFromHeader(request);
+  const token = getTokenFromCookie(request) ?? getTokenFromHeader(request);
   if (!token) {
     return null;
   }
