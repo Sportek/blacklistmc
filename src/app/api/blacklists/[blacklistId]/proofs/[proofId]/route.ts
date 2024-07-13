@@ -4,7 +4,6 @@ import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 interface UserBlacklistProofParams {
   params: {
-    userId: string;
     blacklistId: string;
     proofId: string;
   };
@@ -12,19 +11,17 @@ interface UserBlacklistProofParams {
 
 /**
  * @swagger
- * /api/users/{userId}/blacklists/{blacklistId}/proofs/{proofId}:
+ * /api/blacklists/{blacklistId}/proofs/{proofId}:
  *   get:
  *     summary: Get a proof
  *     tags:
  *       - Proofs
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
+ *       - name: blacklistId
  *         schema:
  *           type: string
- *         description: The discord id of the user
- *       - name: blacklistId
+ *         description: The id of the blacklist
+ *       - name: proofId
  *         in: path
  *         required: true
  *         schema:
@@ -88,18 +85,12 @@ export async function GET(req: NextRequest, { params }: UserBlacklistProofParams
 
 /**
  * @swagger
- * /api/users/{userId}/blacklists/{blacklistId}/proofs/{proofId}:
+ * /api/blacklists/{blacklistId}/proofs/{proofId}:
  *   put:
  *     summary: Update a proof
  *     tags:
  *       - Proofs
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true

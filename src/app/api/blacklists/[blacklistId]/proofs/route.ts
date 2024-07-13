@@ -6,7 +6,6 @@ import path from "path";
 
 interface UsersUserIdBlacklistsBlacklistIdProofsParams {
   params: {
-    userId: string;
     blacklistId: string;
   };
 }
@@ -72,11 +71,6 @@ const getProofType = (fileName: string): ProofType => {
  *                   type: string
  */
 export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
-  const user = await prisma.user.findUnique({ where: { id: params.userId } });
-  if (!user) {
-    return Response.json({ error: "User not found" }, { status: 404 });
-  }
-
   const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });
@@ -144,10 +138,6 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *                   type: string
  */
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
-  const user = await prisma.user.findUnique({ where: { id: params.userId } });
-  if (!user) {
-    return Response.json({ error: "User not found" }, { status: 404 });
-  }
   const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });
@@ -156,7 +146,7 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBl
   try {
     const file = await uploadFileToAzure(
       req,
-      path.posix.join("users", params.userId, "blacklists", params.blacklistId, "proofs")
+      path.posix.join("users", blacklist.userId, "blacklists", params.blacklistId, "proofs")
     );
 
     const proof = await prisma.proof.create({

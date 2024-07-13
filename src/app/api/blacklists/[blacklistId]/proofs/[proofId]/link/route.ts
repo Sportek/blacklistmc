@@ -6,7 +6,6 @@ import { NextRequest } from "next/server";
 
 interface LinkRequestParams {
   params: {
-    userId: string;
     blacklistId: string;
     proofId: string;
   };
@@ -14,18 +13,12 @@ interface LinkRequestParams {
 
 /**
  * @swagger
- * /api/users/{userId}/blacklists/{blacklistId}/proofs/{proofId}/link:
+ * /api/blacklists/{blacklistId}/proofs/{proofId}/link:
  *   get:
  *     summary: Get temporary signed URL for proof
  *     tags:
  *       - Proofs
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The discord id of the user
  *       - name: blacklistId
  *         in: path
  *         required: true

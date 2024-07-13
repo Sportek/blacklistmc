@@ -17,9 +17,9 @@ interface ProofPageProps {
 }
 
 const ProofPage = ({ params }: ProofPageProps) => {
-  const proof = useSWR<Proof>(`/api/users/onsenfou/blacklists/${params.id}/proofs/${params.proofId}`, fetcher);
+  const proof = useSWR<Proof>(`/api/blacklists/${params.id}/proofs/${params.proofId}`, fetcher);
   const link = useSWR<{ url: string }>(
-    `/api/users/onsenfou/blacklists/${params.id}/proofs/${params.proofId}/link`,
+    `/api/blacklists/${params.id}/proofs/${params.proofId}/link`,
     fetcher
   );
 
@@ -54,7 +54,7 @@ const ProofPage = ({ params }: ProofPageProps) => {
 
 
   const handleChangeVisibility = async () => {
-    const response = await fetch(`/api/users/onsenfou/blacklists/${params.id}/proofs/${params.proofId}`, {
+    const response = await fetch(`/api/blacklists/${params.id}/proofs/${params.proofId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
