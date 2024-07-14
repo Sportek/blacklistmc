@@ -101,6 +101,10 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *               channelId:
  *                 type: string
  *                 description: The id of the channel related to the blacklist
+ *               reasonId:
+ *                 type: string
+ *                 description: The id of the reason of the blacklist
+ *                 nullable: true
  *             required:
  *               - title
  *               - description
@@ -149,8 +153,8 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
 export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
-    const { title, description, askedByUserId, expireAt, channelId } = await req.json();
-    const validated = createBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId });
+    const { title, description, askedByUserId, expireAt, channelId, reasonId } = await req.json();
+    const validated = createBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId, reasonId });
     if (!validated.success) {
       const errorMessages = validated.error.flatten().fieldErrors;
       return Response.json({ error: "Invalid data", details: errorMessages }, { status: 400 });
@@ -166,10 +170,16 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
       return Response.json({ error: "Asked by user not found" }, { status: 404 });
     }
 
+    const reason = await prisma.reason.findUnique({ where: { id: reasonId } });
+    if (reasonId && !reason) {
+      return Response.json({ error: "Reason not found" }, { status: 404 });
+    }
+
     const blacklist = await prisma.blacklist.create({
       data: {
         title,
         description,
+        reason: reasonId ? { connect: { id: reasonId } } : undefined,
         askedByUser: { connect: { id: askedByUserId } },
         channelId,
         expireAt: expireAt ? new Date(expireAt) : null,

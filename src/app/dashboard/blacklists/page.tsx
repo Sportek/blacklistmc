@@ -16,7 +16,9 @@ const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => 
   const nElement = searchParams.nElement ?? "7";
   const blacklistAmount = await prisma.blacklist.count();
   const url = `${process.env.NEXT_PUBLIC_API_URL}/blacklists?page=${page}&search=${search}&limit=${nElement}`;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    cache: "no-cache",
+  });
   if (!response.ok) return null;
   const blacklists: (Blacklist & { user: User; reason: Reason })[] = await response.json();
   const maxPage = Math.ceil(blacklistAmount / parseInt(nElement));
