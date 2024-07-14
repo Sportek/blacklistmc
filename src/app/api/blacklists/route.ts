@@ -107,6 +107,7 @@ export async function GET(req: NextRequest) {
         include: {
           user: true,
           votes: true,
+          reason: true,
           _count: {
             select: {
               votes: true,

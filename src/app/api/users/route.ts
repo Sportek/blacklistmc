@@ -69,10 +69,26 @@ export async function GET(req: NextRequest) {
   } else {
     users = await prisma.user.findMany({
       where: {
-        displayName: {
-          contains: search,
-          mode: "insensitive",
-        },
+        OR: [
+          {
+            id: {
+              startsWith: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            displayName: {
+              startsWith: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            username: {
+              startsWith: search,
+              mode: "insensitive",
+            },
+          },
+        ],
       },
     });
   }
@@ -135,7 +151,7 @@ export async function POST(req: NextRequest) {
     const userInfo = await updateOrCreateUserInfo(id);
 
     return NextResponse.json(userInfo);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof ZodError) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
@@ -146,6 +162,9 @@ export async function POST(req: NextRequest) {
     }
     if (error instanceof AuthorizationError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    if (error.message === "Too Many Requests") {
+      return NextResponse.json({ error: "Too Many Requests" }, { status: 429 });
     }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

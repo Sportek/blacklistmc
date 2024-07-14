@@ -32,6 +32,10 @@ export const getUserInfo = async (userId: string): Promise<UserInfo> => {
       if (response.status === 404) {
         throw new Error("User not found");
       }
+      if (response.status === 429) {
+        throw new Error("Too Many Requests");
+      }
+      console.log(await response.json());
       throw new Error(`Erreur HTTP! statut: ${response.status}`);
     }
 

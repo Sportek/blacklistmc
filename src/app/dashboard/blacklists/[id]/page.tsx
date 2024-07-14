@@ -20,6 +20,7 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
     },
     include: {
       user: true,
+      reason: true,
       votes: {
         include: {
           moderator: true,
@@ -42,7 +43,8 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
           <div className="text-xl font-semibold">
             <div className="flex flex-row gap-2 items-center">
               {blacklistStatusBadge(blacklist.status)}
-              {blacklist.title}{" "}
+              {/* Si le titre est vide, on affiche le nom du motif */}
+              {blacklist.title || blacklist.reason?.name || "Sans motif"}{" "}
             </div>
           </div>
           <div className="flex flex-row gap-2 items-center">

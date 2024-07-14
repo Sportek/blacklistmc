@@ -1,5 +1,5 @@
 import { ArrowLongRightIcon, ShieldCheckIcon, ShieldExclamationIcon } from "@heroicons/react/24/solid";
-import { Blacklist, User } from "@prisma/client";
+import { Blacklist, Reason, User } from "@prisma/client";
 import Link from "next/link";
 import Badge from "../landing/badge";
 import Card from "../landing/card";
@@ -36,7 +36,7 @@ export const isBlacklistExpired = (blacklist: Blacklist) => {
 };
 
 interface BlacklistProps {
-  blacklist: Blacklist;
+  blacklist: Blacklist & { reason: Reason };
   user: User;
 }
 const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {
@@ -53,7 +53,7 @@ const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {
               {`#${blacklist.id.toString().padStart(4, "0")}`}
             </div>
             <div className="flex flex-col gap-2">
-              <div className="text-xl font-extrabold">{blacklist.title}</div>
+              <div className="text-xl font-extrabold">{blacklist.title || blacklist.reason?.name || "Sans motif"}</div>
               <div className="text-sm font-normal flex flex-row gap-2 items-center">
                 <div className="whitespace-break-spaces flex-grow">
                   {new Date(blacklist.createdAt).toLocaleDateString("fr-FR", {

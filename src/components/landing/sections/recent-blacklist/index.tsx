@@ -1,5 +1,5 @@
 import BlacklistCard from "@/components/blacklist";
-import { Blacklist, User } from "@prisma/client";
+import { Blacklist, Reason, User } from "@prisma/client";
 
 const RecentBlacklist = async () => {
   const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
@@ -10,6 +10,7 @@ const RecentBlacklist = async () => {
 
   const blacklists = (await request.json()) as (Blacklist & {
     user: User;
+    reason: Reason;
   })[];
 
   return (

@@ -35,7 +35,7 @@ export default function SearchBlacklist() {
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
-      const users = await fetch(`/api/research?query=${debouncedSearch}`);
+      const users = await fetch(`/api/users?search=${debouncedSearch}&limit=15`);
       setUsers((await users.json()) as User[]);
       setIsLoading(false);
     };

@@ -1,7 +1,7 @@
 import Badge from "@/components/landing/badge";
 import Card from "@/components/landing/card";
 import { CheckIcon, ClockIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Blacklist, BlacklistStatus, User } from "@prisma/client";
+import { Blacklist, BlacklistStatus, Reason, User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -18,7 +18,7 @@ export const blacklistStatusBadge = (status: BlacklistStatus) => {
   }
 }
 
-const BlacklistCard = ({ blacklist, user }: { blacklist: Blacklist, user: User }) => {
+const BlacklistCard = ({ blacklist, user }: { blacklist: Blacklist & { reason: Reason }, user: User }) => {
   return (
     <Link href={`/dashboard/blacklists/${blacklist.id}`}>
       <Card className="gap-1 flex flex-col hover:bg-white hover:bg-opacity-30 hover:cursor-pointer transition-all duration-75 ease-in-out">
@@ -29,7 +29,7 @@ const BlacklistCard = ({ blacklist, user }: { blacklist: Blacklist, user: User }
         </div>
         <div className="text-lg flex items-center gap-2">
           {blacklistStatusBadge(blacklist.status)}
-          {blacklist.title}
+          {blacklist.title || blacklist.reason?.name || "Sans motif"}
         </div>
       </Card>
     </Link>

@@ -1,7 +1,7 @@
 import BlacklistCard from "@/components/panel/blacklists";
 import DashboardPagination from "@/components/panel/users/paginate";
 import prisma from "@/lib/prisma";
-import { Blacklist, User } from "@prisma/client";
+import { Blacklist, Reason, User } from "@prisma/client";
 
 interface DashboardBlacklistProps {
   searchParams: {
@@ -18,7 +18,7 @@ const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => 
   const url = `${process.env.NEXT_PUBLIC_API_URL}/blacklists?page=${page}&search=${search}&limit=${nElement}`;
   const response = await fetch(url);
   if (!response.ok) return null;
-  const blacklists: (Blacklist & { user: User })[] = await response.json();
+  const blacklists: (Blacklist & { user: User; reason: Reason })[] = await response.json();
   const maxPage = Math.ceil(blacklistAmount / parseInt(nElement));
 
   return (

@@ -41,6 +41,7 @@ const UserPage = async ({ params }: UserPageProps) => {
       },
       Blacklist: {
         include: {
+          reason: true,
           user: true,
           votes: true,
           _count: {
