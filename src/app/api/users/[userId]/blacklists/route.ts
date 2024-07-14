@@ -170,9 +170,12 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
       return Response.json({ error: "Asked by user not found" }, { status: 404 });
     }
 
-    const reason = await prisma.reason.findUnique({ where: { id: reasonId } });
-    if (reasonId && !reason) {
-      return Response.json({ error: "Reason not found" }, { status: 404 });
+    let reason;
+    if (reasonId) {
+      reason = await prisma.reason.findUnique({ where: { id: reasonId } });
+      if (!reason) {
+        return Response.json({ error: "Reason not found" }, { status: 404 });
+      }
     }
 
     const blacklist = await prisma.blacklist.create({
@@ -194,5 +197,7 @@ export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsPa
     if (error instanceof AuthorizationError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
