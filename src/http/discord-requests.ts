@@ -21,29 +21,25 @@ export interface UserInfo {
 }
 
 export const getUserInfo = async (userId: string): Promise<UserInfo> => {
-  try {
-    const response = await fetch(`${DISCORD_API_URL}/users/${userId}`, {
-      headers: {
-        Authorization: `Bot ${TOKEN}`,
-      },
-    });
+  const response = await fetch(`${DISCORD_API_URL}/users/${userId}`, {
+    headers: {
+      Authorization: `Bot ${TOKEN}`,
+    },
+  });
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error("User not found");
-      }
-      if (response.status === 429) {
-        throw new Error("Too Many Requests");
-      }
-      console.log(await response.json());
-      throw new Error(`Erreur HTTP! statut: ${response.status}`);
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("User not found");
     }
-
-    const data = await response.json();
-    return data as UserInfo;
-  } catch (error) {
-    throw error;
+    if (response.status === 429) {
+      throw new Error("Too Many Requests");
+    }
+    console.log(await response.json());
+    throw new Error(`Erreur HTTP! statut: ${response.status}`);
   }
+
+  const data = await response.json();
+  return data as UserInfo;
 };
 
 export const getBufferFromImageUrl = async (url: string): Promise<Buffer> => {
@@ -75,13 +71,15 @@ export const areUserInfoDifferent = (oldUserInfo: UserData, newUserInfo: UserDat
   );
 };
 
-export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
-  const imageUrl = await uploadBufferToAzure(
+const getImageUrl = async (userId: string, userInfo: UserInfo) => {
+  return uploadBufferToAzure(
     await getBufferFromImageUrl(`https://cdn.discordapp.com/avatars/${userId}/${userInfo.avatar}.png`),
     path.posix.join("users", userId, "avatars", `${Date.now()}.png`),
     true
   );
+};
 
+export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
   const oldUser = await prisma.user.findUnique({ where: { id: userId } });
   let user;
   if (!oldUser) {
@@ -91,7 +89,7 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
         displayName: userInfo.global_name || userInfo.username,
         username: userInfo.username,
         imageTag: userInfo.avatar,
-        imageUrl: imageUrl,
+        imageUrl: await getImageUrl(userId, userInfo),
       },
     });
   } else if (
@@ -115,7 +113,7 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
         username: userInfo.username,
         imageTag: userInfo.avatar,
         displayName: userInfo.global_name || userInfo.username,
-        imageUrl: imageUrl,
+        imageUrl: oldUser.imageTag === userInfo.avatar ? oldUser.imageUrl : await getImageUrl(userId, userInfo),
         UserHistory: {
           connect: {
             id: history.id,
@@ -129,7 +127,6 @@ export const setUserInfo = async (userId: string, userInfo: UserInfo) => {
   } else {
     user = oldUser;
   }
-
   return user;
 };
 
