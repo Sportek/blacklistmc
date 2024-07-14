@@ -1,5 +1,4 @@
 import DashboardPagination from "@/components/panel/users/paginate";
-import UserPagination from "@/components/panel/users/paginate";
 import UserCard from "@/components/panel/users/user-card";
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
@@ -19,7 +18,9 @@ const Users = async ({ searchParams }: UsersProps) => {
   const userAmount = await prisma.user.count();
 
   const url = `${process.env.NEXT_PUBLIC_API_URL}/users?page=${page}&search=${search}&limit=${nElement}`;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    cache: "no-cache",
+  });
 
   if (!response.ok) return null;
 
