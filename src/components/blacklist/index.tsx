@@ -36,7 +36,7 @@ export const isBlacklistExpired = (blacklist: Blacklist) => {
 };
 
 interface BlacklistProps {
-  blacklist: Blacklist & { reason: Reason };
+  blacklist: Blacklist & { reason?: Reason };
   user: User;
 }
 const BlacklistCard = ({ blacklist, user }: BlacklistProps) => {

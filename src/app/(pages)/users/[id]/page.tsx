@@ -76,35 +76,35 @@ const UserPage = async ({ params }: UserPageProps) => {
         </div>
         <div className="flex flex-col md:flex-row gap-10 w-full">
           {(user.UserHistory || []).length > 0 ? (
-              <div className="flex flex-col gap-4 w-full">
-                <div className="font-bold text-xl">Historique du compte</div>
-                <div className="flex flex-col gap-4"></div>
-                {(user.UserHistory || [])
-                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                  .map((history) => {
-                    return <UserCard noBadge key={history.id} user={{ ...history, id: user.id } as unknown as User} />;
-                  })}
-              </div>
+            <div className="flex flex-col gap-4 w-full">
+              <div className="font-bold text-xl">Historique du compte</div>
+              <div className="flex flex-col gap-4"></div>
+              {(user.UserHistory || [])
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .map((history) => {
+                  return <UserCard noBadge key={history.id} user={{ ...history, id: user.id } as unknown as User} />;
+                })}
+            </div>
           ) : null}
           {(user.group?.users || []).length > 0 ? (
-              <div className="flex flex-col gap-4 w-full">
-                <div className="font-bold text-xl">Doubles comptes répertoriés</div>
-                <div className="flex flex-col gap-4">
-                  {(user.group?.users || []).length > 0
-                    ? (user.group?.users || [])
-                        .filter((sameUser) => sameUser.id !== user.id)
-                        .map((sameUser) => {
-                          return (
-                            <Link key={sameUser.id} href={`/users/${sameUser.id}`}>
-                              <Card className="w-full hover:bg-opacity-30 transition-all duration-75 ease-in-out">
-                                <UserCard user={sameUser} />
-                              </Card>
-                            </Link>
-                          );
-                        })
-                    : null}
-                </div>
+            <div className="flex flex-col gap-4 w-full">
+              <div className="font-bold text-xl">Doubles comptes répertoriés</div>
+              <div className="flex flex-col gap-4">
+                {(user.group?.users || []).length > 0
+                  ? (user.group?.users || [])
+                      .filter((sameUser) => sameUser.id !== user.id)
+                      .map((sameUser) => {
+                        return (
+                          <Link key={sameUser.id} href={`/users/${sameUser.id}`}>
+                            <Card className="w-full hover:bg-opacity-30 transition-all duration-75 ease-in-out">
+                              <UserCard user={sameUser} />
+                            </Card>
+                          </Link>
+                        );
+                      })
+                  : null}
               </div>
+            </div>
           ) : null}
         </div>
         {user.Blacklist.length > 0 && (
@@ -112,7 +112,13 @@ const UserPage = async ({ params }: UserPageProps) => {
             <div className="font-bold text-xl">Blacklist récents</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
               {user.Blacklist.map((blacklist) => {
-                return <BlacklistCard key={blacklist.id} blacklist={blacklist} user={blacklist.user} />;
+                return (
+                  <BlacklistCard
+                    key={blacklist.id}
+                    blacklist={{ ...blacklist, reason: blacklist.reason || undefined }}
+                    user={blacklist.user}
+                  />
+                );
               })}
             </div>
           </div>
