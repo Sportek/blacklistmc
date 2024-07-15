@@ -7,12 +7,15 @@ import { Reason } from "@prisma/client";
 
 const ReasonsPage = () => {
   const [reasons, setReasons] = useState<Reason[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchReasons = async () => {
+      setIsLoading(true);
       const response = await fetch("/api/reasons");
       const data = await response.json();
       setReasons(data);
+      setIsLoading(false);
     };
     fetchReasons();
   }, []);
@@ -29,17 +32,24 @@ const ReasonsPage = () => {
     <ReasonComponent key={reason.id} reason={reason} onDelete={deleteReason} />
   ));
 
+  const fields = () => {
+    if (isLoading) {
+      return <div className="text-center text-white/50">Chargement...</div>;
+    }
+    if (reasons.length === 0) {
+      return <div className="text-center text-white/50">Aucun motif trouvé</div>;
+    }
+    
+    return reasonsFields;
+  };
+
   return (
     <div className="w-full flex flex-col gap-2 items-center overflow-y-auto h-screen pt-8 px-2">
       <div className="max-w-3xl w-full flex flex-col gap-4">
         <div className="text-2xl font-semibold w-full">Motifs</div>
         <AddReason onAdd={addReason} />
         <div className="w-full flex flex-col gap-2">
-          {reasonsFields.length > 0 ? (
-            reasonsFields
-          ) : (
-            <div className="text-center text-gray-500">Aucun motif trouvé</div>
-          )}
+          {fields()}
         </div>
       </div>
     </div>
