@@ -2,9 +2,11 @@ import { AccountRole } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
 import prisma from "./prisma";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
-const getTokenFromCookie = (request: NextRequest): string | null => {
-  const token = request.cookies.get("token");
+const getTokenFromCookie = (cookies: RequestCookies): string | null => {
+  const token = cookies.get("token");
   if (!token) {
     return null;
   }
@@ -20,7 +22,7 @@ const getTokenFromHeader = (request: NextRequest): string | null => {
 };
 
 export const getSession = async (request: NextRequest) => {
-  const token = getTokenFromCookie(request) ?? getTokenFromHeader(request);
+  const token = getTokenFromCookie(request.cookies) ?? getTokenFromHeader(request);
   if (!token) {
     return null;
   }
@@ -68,6 +70,18 @@ export const verifyRoleRequired = async (role: AccountRole, request: NextRequest
   const session = await getSession(request);
   if (!session) throw new AuthorizationError("Unauthorized", 401);
   if (!hasAtLeastRole(role, session.role)) throw new AuthorizationError("Forbidden", 403);
+};
+
+
+export const getSessionServerSide = async (cookies: ReadonlyRequestCookies) => {
+  const token = getTokenFromCookie(cookies as unknown as RequestCookies);
+  if (!token) return null;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string };
+  return await prisma.account.findUnique({ where: { id: decoded.id } });
+};
+
+export const formatSessionCookie = (cookies: ReadonlyRequestCookies) => {
+  return cookies.getAll().map((cookie) => cookie.name + "=" + cookie.value).join(";");
 };
 
 export class AuthorizationError extends Error {

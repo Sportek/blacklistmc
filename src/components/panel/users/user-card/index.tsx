@@ -30,8 +30,8 @@ const UserCard = ({ user, userAccount }: UserCardProps) => {
 
     if (!response.ok) {
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du changement de rôle",
+        title: "Une erreur est survenue lors du changement de rôle",
+        description: (await response.json()).error,
       });
     }
 

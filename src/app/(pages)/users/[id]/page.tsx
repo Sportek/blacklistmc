@@ -6,7 +6,7 @@ import UserCard from "@/components/landing/user";
 import StatusBadge from "@/components/user/status-badge";
 import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
-import { User } from "@prisma/client";
+import { BlacklistStatus, User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -40,6 +40,9 @@ const UserPage = async ({ params }: UserPageProps) => {
         },
       },
       Blacklist: {
+        where: {
+          status: BlacklistStatus.APPROVED,
+        },
         include: {
           reason: true,
           user: true,

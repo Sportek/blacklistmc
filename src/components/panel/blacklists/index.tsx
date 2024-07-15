@@ -8,13 +8,13 @@ import Link from "next/link";
 export const blacklistStatusBadge = (status: BlacklistStatus) => {
   switch (status) {
     case "PENDING":
-      return <Badge icon={<ClockIcon className="w-4 h-4" />} label="Pending" />
+      return <Badge icon={<ClockIcon className="w-4 h-4" />} className="bg-yellow-600" label="Pending" />
     case "APPROVED":
-      return <Badge icon={<CheckIcon className="w-4 h-4" />} label="Approved" />
+      return <Badge icon={<CheckIcon className="w-4 h-4" />} className="bg-green-600" label="Approved" />
     case "REJECTED":
-      return <Badge icon={<XMarkIcon className="w-4 h-4" />} label="Rejected" />
+      return <Badge icon={<XMarkIcon className="w-4 h-4" />} className="bg-red-600" label="Rejected" />
     default:
-      return <Badge icon={<ClockIcon className="w-4 h-4" />} label="Pending" />
+      return <Badge icon={<ClockIcon className="w-4 h-4" />} className="bg-yellow-600" label="Pending" />
   }
 }
 

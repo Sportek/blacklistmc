@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
-import { Blacklist } from "@prisma/client";
+import { Blacklist, BlacklistStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UserUserIdStatusParams {
@@ -65,7 +65,11 @@ export async function GET(req: NextRequest, { params }: UserUserIdStatusParams) 
       id: params.userId,
     },
     select: {
-      Blacklist: true,
+      Blacklist: {
+        where: {
+          status: BlacklistStatus.APPROVED,
+        },
+      },
     },
   });
 

@@ -1,8 +1,10 @@
 import Card from "@/components/landing/card";
 import { blacklistStatusBadge } from "@/components/panel/blacklists";
+import ChangeBlacklistStatus from "@/components/panel/blacklists/change-blacklist-status";
+import DeleteBlacklist from "@/components/panel/blacklists/delete-blacklist";
 import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-import { ArrowLongRightIcon, CheckIcon, LockClosedIcon, LockOpenIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ArrowLongRightIcon, LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -42,7 +44,7 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
         <Card className="flex flex-col gap-2">
           <div className="text-xl font-semibold">
             <div className="flex flex-row gap-2 items-center">
-              {blacklistStatusBadge(blacklist.status)}
+              <ChangeBlacklistStatus status={blacklist.status} blacklist={blacklist} />
               {/* Si le titre est vide, on affiche le nom du motif */}
               {blacklist.title || blacklist.reason?.name || "Sans motif"}{" "}
             </div>
@@ -93,6 +95,8 @@ const BlacklistPage = async ({ params }: BlacklistPageProps) => {
               </Card>
             ))}
           </div>
+
+          <DeleteBlacklist blacklist={blacklist} />
         </Card>
       </div>
     </div>

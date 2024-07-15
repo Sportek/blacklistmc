@@ -1,7 +1,9 @@
 import BlacklistCard from "@/components/panel/blacklists";
 import DashboardPagination from "@/components/panel/users/paginate";
+import { formatSessionCookie } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
 import { Blacklist, Reason, User } from "@prisma/client";
+import { cookies } from "next/headers";
 
 interface DashboardBlacklistProps {
   searchParams: {
@@ -15,8 +17,13 @@ const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => 
   const page = searchParams.page ?? "1";
   const nElement = searchParams.nElement ?? "7";
   const blacklistAmount = await prisma.blacklist.count();
+
   const url = `${process.env.NEXT_PUBLIC_API_URL}/blacklists?page=${page}&search=${search}&limit=${nElement}`;
+
   const response = await fetch(url, {
+    headers: {
+      Cookie: formatSessionCookie(cookies()),
+    },
     cache: "no-cache",
   });
   if (!response.ok) return null;

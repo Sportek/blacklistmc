@@ -45,7 +45,8 @@ const MultipleOrbit = async ({ className }: MultipleOrbitProps) => {
         speed={140}
         radius={325}
         items={users.slice(firstLine, firstLine + secondLine).map((user) => {
-          return (
+          try {
+            return (
             <Link href={`/users/${user.id}`} key={user.id}>
               <Image
                 className="rounded-full"
@@ -57,6 +58,9 @@ const MultipleOrbit = async ({ className }: MultipleOrbitProps) => {
               />
             </Link>
           );
+          } catch (error) {
+            return null;
+          }
         })}
       ></Orbit>
       <Orbit

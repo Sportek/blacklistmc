@@ -2,7 +2,7 @@ import BlacklistCard from "@/components/blacklist";
 import { Blacklist, Reason, User } from "@prisma/client";
 
 const RecentBlacklist = async () => {
-  const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc`, {
+  const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc&status=APPROVED`, {
     cache: "no-store",
   });
 
@@ -12,6 +12,8 @@ const RecentBlacklist = async () => {
     user: User;
     reason: Reason;
   })[];
+
+  if(blacklists.length === 0) return null;
 
   return (
     <div className="relative h-full w-full flex flex-col items-center">

@@ -1,6 +1,8 @@
+import { getSession, hasAtLeastRole } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { Blacklist } from "@prisma/client";
+import { AccountRole, Blacklist, BlacklistStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { searchParamsSchema } from "./blacklistSearchParamsValidator";
 
 /**
  * @swagger
@@ -64,11 +66,19 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
-  const limit = parseInt(searchParams.get("limit") ?? "10");
-  const order = searchParams.get("order") ?? ("desc" as "asc" | "desc");
-  const random = searchParams.get("random") === "true";
-  const page = parseInt(searchParams.get("page") ?? "1");
-  const search = searchParams.get("search") ?? "";
+  const parsedParams = searchParamsSchema.safeParse(Object.fromEntries(searchParams.entries()));
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: "Invalid search parameters" }, { status: 400 });
+  }
+
+  const { limit, order, random, page, search, status } = parsedParams.data;
+
+  const session = await getSession(req);
+
+  if((!session || !hasAtLeastRole(AccountRole.SUPPORT, session.role)) && status !== "APPROVED") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const skip = (page - 1) * limit;
 
   try {
@@ -80,6 +90,7 @@ export async function GET(req: NextRequest) {
     } else {
       blacklists = await prisma.blacklist.findMany({
         where: {
+          status: status as BlacklistStatus,
           OR: [
             {
               user: {

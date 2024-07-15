@@ -63,8 +63,8 @@ const ProofPage = ({ params }: ProofPageProps) => {
     });
     if (!response.ok) {
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour de la preuve",
+        title: "Une erreur s'est produite lors de la mise à jour de la preuve",
+        description: (await response.json()).error,
       });
     }
 

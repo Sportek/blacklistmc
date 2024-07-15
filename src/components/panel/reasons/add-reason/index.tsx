@@ -23,7 +23,7 @@ const AddReason = ({ onAdd }: AddReasonProps) => {
         body: JSON.stringify({ name }),
       });
       if (!response.ok) {
-        throw new Error("Failed to add reason");
+        throw new Error((await response.json()).error);
       }
       const data = await response.json();
       onAdd(data); // Appeler la fonction onAdd avec la nouvelle raison
@@ -33,10 +33,10 @@ const AddReason = ({ onAdd }: AddReasonProps) => {
         variant: "default",
       });
       setName("");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Echec de l'ajout du motif",
-        description: "Veuillez réessayer plus tard",
+        description: error.message,
         variant: "destructive",
       });
     } finally {

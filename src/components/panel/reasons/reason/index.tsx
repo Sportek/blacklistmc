@@ -25,8 +25,7 @@ const ReasonComponent = ({ reason, onDelete }: ReasonComponentProps) => {
       });
 
       if (!response.ok) {
-        console.log(await response.json());
-        throw new Error("Failed to delete reason");
+        throw new Error((await response.json()).error);
       }
 
       onDelete(reason.id); // Appeler la fonction onDelete avec l'ID de la raison supprimée
@@ -34,10 +33,10 @@ const ReasonComponent = ({ reason, onDelete }: ReasonComponentProps) => {
         title: "Motif supprimé",
         description: "Motif supprimé avec succès",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Echec",
-        description: "Impossible de supprimer le motif",
+        description: error.message,
       });
     } finally {
       setIsLoading(false);
