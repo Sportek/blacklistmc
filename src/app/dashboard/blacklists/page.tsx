@@ -24,7 +24,7 @@ const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => 
     headers: {
       Cookie: formatSessionCookie(cookies()),
     },
-    cache: "no-cache",
+    cache: "no-store",
   });
   if (!response.ok) return null;
   const blacklists: (Blacklist & { user: User; reason: Reason })[] = await response.json();

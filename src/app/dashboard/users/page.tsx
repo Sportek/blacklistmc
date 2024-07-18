@@ -19,7 +19,7 @@ const Users = async ({ searchParams }: UsersProps) => {
 
   const url = `${process.env.NEXT_PUBLIC_API_URL}/users?page=${page}&search=${search}&limit=${nElement}`;
   const response = await fetch(url, {
-    cache: "no-cache",
+    cache: "no-store",
   });
 
   if (!response.ok) return null;
