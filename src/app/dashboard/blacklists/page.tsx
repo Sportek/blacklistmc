@@ -20,6 +20,9 @@ const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => 
 
   const url = `${process.env.NEXT_PUBLIC_API_URL}/blacklists?page=${page}&search=${search}&limit=${nElement}`;
 
+  console.log("Cookies trouvés", formatSessionCookie(cookies()));
+
+
   const response = await fetch(url, {
     headers: {
       Cookie: formatSessionCookie(cookies()),
