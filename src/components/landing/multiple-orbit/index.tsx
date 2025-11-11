@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,18 +48,18 @@ const MultipleOrbit = async ({ className }: MultipleOrbitProps) => {
         items={users.slice(firstLine, firstLine + secondLine).map((user) => {
           try {
             return (
-            <Link href={`/users/${user.id}`} key={user.id}>
-              <Image
-                className="rounded-full"
-                key={user.id}
-                src={user.imageUrl}
-                alt={user.displayName}
-                width={40}
-                height={40}
-              />
-            </Link>
-          );
-          } catch (error) {
+              <Link href={`/users/${user.id}`} key={user.id}>
+                <Image
+                  className="rounded-full"
+                  key={user.id}
+                  src={user.imageUrl}
+                  alt={user.displayName}
+                  width={40}
+                  height={40}
+                />
+              </Link>
+            );
+          } catch {
             return null;
           }
         })}
@@ -69,14 +70,18 @@ const MultipleOrbit = async ({ className }: MultipleOrbitProps) => {
         items={users.slice(firstLine + secondLine, firstLine + secondLine + thirdLine).map((user) => {
           return (
             <Link href={`/users/${user.id}`} key={user.id}>
-              <Image
+              {/* <Image
                 className="rounded-full"
                 key={user.id}
                 src={user.imageUrl}
                 alt={user.displayName}
                 width={20}
                 height={20}
-              />
+              /> */}
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={user.imageUrl} alt={user.id} />
+                <AvatarFallback className="bg-slate-900 text-white font-semibold">{user.displayName[0]}</AvatarFallback>
+              </Avatar>
             </Link>
           );
         })}
