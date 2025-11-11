@@ -199,8 +199,16 @@ export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklists
 export async function PATCH(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
-    const { title, description, askedByUserId, expireAt, channelId, status } = await req.json();
-    const validated = updateBlacklistSchema.safeParse({ title, description, askedByUserId, expireAt, channelId, status });
+    const { title, description, askedByUserId, expireAt, channelId, status, reasonId } = await req.json();
+    const validated = await updateBlacklistSchema.safeParseAsync({
+      title,
+      description,
+      askedByUserId,
+      expireAt,
+      channelId,
+      status,
+      reasonId,
+    });
     if (!validated.success) {
       const errorMessages = validated.error.flatten().fieldErrors;
       return NextResponse.json({ error: "Invalid data", details: errorMessages }, { status: 400 });

@@ -1,4 +1,5 @@
-import { BlacklistStatus } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import { BlacklistStatus, BlacklistVoteState } from "@prisma/client";
 import { z } from "zod";
 
 export const createBlacklistSchema = z.object({
@@ -27,5 +28,17 @@ export const updateBlacklistSchema = z.object({
     }
     return arg;
   }, z.date().optional()),
+  reasonId: z
+    .string()
+    .refine(reasonIdExists, {
+      message: "Le reasonId n'existe pas dans la base de données",
+    })
+    .optional(),
   channelId: z.string().optional(),
+  voteState: z.nativeEnum(BlacklistVoteState).optional(),
 });
+
+async function reasonIdExists(reasonId: string) {
+  const reason = await prisma.reason.findUnique({ where: { id: reasonId } });
+  return reason !== null;
+}

@@ -5,6 +5,8 @@ import RecentBlacklist from "@/components/landing/sections/recent-blacklist";
 import SearchBlacklist from "@/components/landing/sections/search-blacklist";
 import Victim from "@/components/landing/sections/victim";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   return (
     <>

@@ -1,19 +1,29 @@
 import BlacklistCard from "@/components/blacklist";
-import { Blacklist, Reason, User } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
 const RecentBlacklist = async () => {
-  const request = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blacklists?limit=4&order=desc&status=APPROVED`, {
-    cache: "no-store",
+  const blacklists = await prisma.blacklist.findMany({
+    where: {
+      status: "APPROVED",
+    },
+    take: 4,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      user: true,
+      reason: true,
+      votes: true,
+      _count: {
+        select: {
+          votes: true,
+        },
+      },
+      proofs: true,
+    },
   });
 
-  if (!request.ok) return null;
-
-  const blacklists = (await request.json()) as (Blacklist & {
-    user: User;
-    reason: Reason;
-  })[];
-
-  if(blacklists.length === 0) return null;
+  if (blacklists.length === 0) return null;
 
   return (
     <div className="relative h-full w-full flex flex-col items-center">
