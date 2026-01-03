@@ -42,10 +42,10 @@ export const getUserInfo = async (userId: string): Promise<UserInfo> => {
   return data as UserInfo;
 };
 
-export const getBufferFromImageUrl = async (url: string): Promise<Buffer> => {
+export const getBufferFromImageUrl = async (url: string): Promise<Uint8Array> => {
   const response = await fetch(url);
   const buffer = await response.arrayBuffer();
-  return Buffer.from(buffer);
+  return new Uint8Array(buffer);
 };
 
 export const getCreationDateFromDiscordID = async (discordId: string): Promise<Date> => {

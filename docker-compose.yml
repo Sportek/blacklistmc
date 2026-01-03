@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: blacklistmc-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-blacklistmc}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-blacklistmc}
+      POSTGRES_DB: ${POSTGRES_DB:-blacklistmc}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-blacklistmc} -d ${POSTGRES_DB:-blacklistmc}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - blacklistmc-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blacklistmc-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      # Database - uses internal Docker network
+      POSTGRES_PRISMA_URL: postgresql://${POSTGRES_USER:-blacklistmc}:${POSTGRES_PASSWORD:-blacklistmc}@db:5432/${POSTGRES_DB:-blacklistmc}?schema=public
+
+      # Auth
+      NEXT_PUBLIC_AUTH_DISCORD_ID: ${NEXT_PUBLIC_AUTH_DISCORD_ID}
+      AUTH_DISCORD_SECRET: ${AUTH_DISCORD_SECRET}
+      NEXT_PUBLIC_AUTH_DISCORD_REDIRECT_URI: ${NEXT_PUBLIC_AUTH_DISCORD_REDIRECT_URI}
+      JWT_SECRET: ${JWT_SECRET}
+
+      # API
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+
+      # Azure Storage
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      AZURE_STORAGE_CONTAINER_NAME: ${AZURE_STORAGE_CONTAINER_NAME}
+      AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME}
+      AZURE_STORAGE_ACCOUNT_KEY: ${AZURE_STORAGE_ACCOUNT_KEY}
+
+      # Discord
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_API_URL: ${DISCORD_API_URL:-https://discord.com/api/v10}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - blacklistmc-network
+
+volumes:
+  postgres_data:
+
+networks:
+  blacklistmc-network:
+    driver: bridge

@@ -13,7 +13,7 @@ export async function proxy(request: NextRequest) {
   try {
     await jwtVerify(token, secret);
     return NextResponse.next();
-  } catch (error) {
+  } catch {
     return Response.redirect(new URL("/", request.url));
   }
 }

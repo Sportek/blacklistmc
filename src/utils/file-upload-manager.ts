@@ -6,9 +6,12 @@ import {
   generateBlobSASQueryParameters,
 } from "@azure/storage-blob";
 import { NextRequest } from "next/server";
-import path from "path";
+import path from "node:path";
 
-export async function uploadFileToAzure(req: NextRequest, filePrefix: string): Promise<{ filePath: string; fileName: string }> {
+export async function uploadFileToAzure(
+  req: NextRequest,
+  filePrefix: string
+): Promise<{ filePath: string; fileName: string }> {
   const fileName = req.headers.get("x-filename");
   if (!fileName) {
     throw new Error("No filename found in headers (x-filename)");
@@ -80,7 +83,6 @@ export async function retrieveBufferFromAzure(filePath: string) {
   return blob.readableStreamBody;
 }
 
-
 export async function generateTemporarySasToken(filePath: string, expiresInHours: number, ipAddress?: string) {
   const sharedKeyCredential = new StorageSharedKeyCredential(
     process.env.AZURE_STORAGE_ACCOUNT_NAME,
@@ -99,14 +101,15 @@ export async function generateTemporarySasToken(filePath: string, expiresInHours
   return generateBlobSASQueryParameters(sasOptions, sharedKeyCredential).toString();
 }
 
-export async function getTemporaryBlobUrlWithSasToken(filePath: string, expiresInHours: number = 3, ipAddress?: string) {
+export async function getTemporaryBlobUrlWithSasToken(
+  filePath: string,
+  expiresInHours: number = 3,
+  ipAddress?: string
+) {
   const sasToken = await generateTemporarySasToken(filePath, expiresInHours, ipAddress);
   const blobServiceClient = new BlobServiceClient(
     `https://${process.env.AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
-    new StorageSharedKeyCredential(
-      process.env.AZURE_STORAGE_ACCOUNT_NAME,
-      process.env.AZURE_STORAGE_ACCOUNT_KEY
-    )
+    new StorageSharedKeyCredential(process.env.AZURE_STORAGE_ACCOUNT_NAME, process.env.AZURE_STORAGE_ACCOUNT_KEY)
   );
   const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
   const blockBlobClient = containerClient.getBlockBlobClient(filePath);
