@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createBlacklistSchema } from "./blacklistSchema";
 
 interface UsersUserIdBlacklistsParams {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
 /**
@@ -53,7 +53,8 @@ interface UsersUserIdBlacklistsParams {
  *                 error:
  *                   type: string
  */
-export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
+export async function GET(req: NextRequest, props: UsersUserIdBlacklistsParams) {
+  const params = await props.params;
   const user = await prisma.user.findUnique({ where: { id: params.userId } });
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
@@ -150,7 +151,8 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsPar
  *                 error:
  *                   type: string
  */
-export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsParams) {
+export async function POST(req: NextRequest, props: UsersUserIdBlacklistsParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
     const { title, description, askedByUserId, expireAt, channelId, reasonId } = await req.json();

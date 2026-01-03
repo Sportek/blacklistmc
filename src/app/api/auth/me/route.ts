@@ -31,7 +31,7 @@ import { NextRequest, NextResponse } from "next/server";
  *                 error:
  *                   type: string
  */
-export const GET = async (req: NextRequest, res: NextResponse) => {
+export const GET = async (req: NextRequest) => {
   const token = req.cookies.get("token");
 
   if (!token) {

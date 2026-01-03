@@ -5,9 +5,9 @@ import { NextRequest } from "next/server";
 import path from "path";
 
 interface UsersUserIdBlacklistsBlacklistIdProofsParams {
-  params: {
+  params: Promise<{
     blacklistId: string;
-  };
+  }>;
 }
 
 const getProofType = (fileName: string): ProofType => {
@@ -64,7 +64,8 @@ const getProofType = (fileName: string): ProofType => {
  *                 error:
  *                   type: string
  */
-export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
+export async function GET(req: NextRequest, props: UsersUserIdBlacklistsBlacklistIdProofsParams) {
+  const params = await props.params;
   const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });
@@ -125,7 +126,8 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *                 error:
  *                   type: string
  */
-export async function POST(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdProofsParams) {
+export async function POST(req: NextRequest, props: UsersUserIdBlacklistsBlacklistIdProofsParams) {
+  const params = await props.params;
   const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });

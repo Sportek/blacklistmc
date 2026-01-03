@@ -5,10 +5,10 @@ import { AccountRole } from "@prisma/client";
 import { NextRequest } from "next/server";
 
 interface LinkRequestParams {
-  params: {
+  params: Promise<{
     blacklistId: string;
     proofId: string;
-  };
+  }>;
 }
 
 /**
@@ -72,7 +72,8 @@ interface LinkRequestParams {
  *                   type: string
  *                   example: Internal server error
  */
-export async function GET(request: NextRequest, { params }: LinkRequestParams) {
+export async function GET(request: NextRequest, props: LinkRequestParams) {
+  const params = await props.params;
   try {
     const proof = await prisma.proof.findUnique({
       where: {

@@ -6,13 +6,14 @@ import { Blacklist, Reason, User } from "@prisma/client";
 import { cookies } from "next/headers";
 
 interface DashboardBlacklistProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     page?: string;
     nElement?: string;
-  };
+  }>;
 }
-const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => {
+const DashboardBlacklist = async (props: DashboardBlacklistProps) => {
+  const searchParams = await props.searchParams;
   const search = searchParams.search ?? "";
   const page = searchParams.page ?? "1";
   const nElement = searchParams.nElement ?? "7";
@@ -20,12 +21,12 @@ const DashboardBlacklist = async ({ searchParams }: DashboardBlacklistProps) => 
 
   const url = `${process.env.NEXT_PUBLIC_API_URL}/blacklists?page=${page}&search=${search}&limit=${nElement}`;
 
-  console.log("Cookies trouvés", formatSessionCookie(cookies()));
+  console.log("Cookies trouvés", formatSessionCookie(await cookies()));
 
 
   const response = await fetch(url, {
     headers: {
-      Cookie: formatSessionCookie(cookies()),
+      Cookie: formatSessionCookie(await cookies()),
     },
     cache: "no-store",
   });

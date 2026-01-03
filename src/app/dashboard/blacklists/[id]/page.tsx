@@ -10,11 +10,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface BlacklistPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
-const BlacklistPage = async ({ params }: BlacklistPageProps) => {
+const BlacklistPage = async (props: BlacklistPageProps) => {
+  const params = await props.params;
 
   const blacklist = await prisma.blacklist.findUnique({
     where: {

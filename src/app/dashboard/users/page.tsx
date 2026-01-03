@@ -4,13 +4,14 @@ import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 
 interface UsersProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     page?: string;
     nElement?: string;
-  };
+  }>;
 }
-const Users = async ({ searchParams }: UsersProps) => {
+const Users = async (props: UsersProps) => {
+  const searchParams = await props.searchParams;
   const search = searchParams.search ?? "";
   const page = searchParams.page ?? "1";
   const nElement = searchParams.nElement ?? "7";

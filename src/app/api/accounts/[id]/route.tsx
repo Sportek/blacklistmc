@@ -5,12 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateAccountValidator } from "./accountValidator";
 
 interface AccountParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export async function GET(req: NextRequest, { params }: AccountParams) {
+export async function GET(req: NextRequest, props: AccountParams) {
+  const params = await props.params;
   const account = await prisma.account.findUnique({
     where: {
       userId: params.id,
@@ -20,7 +21,8 @@ export async function GET(req: NextRequest, { params }: AccountParams) {
   return NextResponse.json(account);
 }
 
-export async function PATCH(req: NextRequest, { params }: AccountParams) {
+export async function PATCH(req: NextRequest, props: AccountParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
     const body = await req.json();

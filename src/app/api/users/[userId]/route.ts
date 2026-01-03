@@ -5,9 +5,9 @@ import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UsersIdParams {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
 /**
@@ -41,7 +41,8 @@ interface UsersIdParams {
  *                 error:
  *                   type: string
  */
-export async function GET(req: NextRequest, { params }: UsersIdParams) {
+export async function GET(req: NextRequest, props: UsersIdParams) {
+  const params = await props.params;
   const user = await prisma.user.findUnique({
     where: { id: params.userId },
     include: {
@@ -91,7 +92,8 @@ export async function GET(req: NextRequest, { params }: UsersIdParams) {
  *       403:
  *         description: Forbidden
  */
-export async function DELETE(req: NextRequest, { params }: UsersIdParams) {
+export async function DELETE(req: NextRequest, props: UsersIdParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
     await prisma.user.delete({ where: { id: params.userId } });
@@ -138,7 +140,8 @@ export async function DELETE(req: NextRequest, { params }: UsersIdParams) {
  *       403:
  *         description: Forbidden
  */
-export async function POST(req: NextRequest, { params }: UsersIdParams) {
+export async function POST(req: NextRequest, props: UsersIdParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
     const userInfo = await updateOrCreateUserInfo(params.userId);

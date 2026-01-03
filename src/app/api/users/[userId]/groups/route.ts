@@ -4,9 +4,9 @@ import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UserUserIdGroupParams {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
 /**
@@ -41,7 +41,8 @@ interface UserUserIdGroupParams {
  *                   type: string
  *                   example: User not found
  */
-export async function GET(req: NextRequest, { params }: UserUserIdGroupParams) {
+export async function GET(req: NextRequest, props: UserUserIdGroupParams) {
+  const params = await props.params;
   const { userId } = params;
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -111,7 +112,8 @@ export async function GET(req: NextRequest, { params }: UserUserIdGroupParams) {
  *                 error:
  *                   type: string
  */
-export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) {
+export async function POST(req: NextRequest, props: UserUserIdGroupParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
 
@@ -176,7 +178,8 @@ export async function POST(req: NextRequest, { params }: UserUserIdGroupParams) 
  *                 error:
  *                   type: string
  */
-export async function DELETE(req: NextRequest, { params }: UserUserIdGroupParams) {
+export async function DELETE(req: NextRequest, props: UserUserIdGroupParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
 

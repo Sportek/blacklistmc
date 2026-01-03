@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import Card from "@/components/landing/card";
 import { toast } from "@/components/ui/use-toast";
@@ -10,13 +11,14 @@ import Image from "next/image";
 import useSWR from "swr";
 
 interface ProofPageProps {
-  params: {
+  params: Promise<{
     id: string;
     proofId: string;
-  };
+  }>;
 }
 
-const ProofPage = ({ params }: ProofPageProps) => {
+const ProofPage = (props: ProofPageProps) => {
+  const params = use(props.params);
   const proof = useSWR<Proof>(`/api/blacklists/${params.id}/proofs/${params.proofId}`, fetcher);
   const link = useSWR<{ url: string }>(
     `/api/blacklists/${params.id}/proofs/${params.proofId}/link`,

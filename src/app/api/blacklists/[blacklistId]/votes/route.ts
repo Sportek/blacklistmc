@@ -4,9 +4,9 @@ import { AccountRole, BlacklistStatus, BlacklistVoteState } from "@prisma/client
 import { NextRequest, NextResponse } from "next/server";
 
 interface VoteParams {
-  params: {
+  params: Promise<{
     blacklistId: string;
-  };
+  }>;
 }
 
 /**
@@ -63,7 +63,8 @@ interface VoteParams {
  *                   type: string
  *                   example: Internal server error
  */
-export async function GET(req: NextRequest, { params }: VoteParams) {
+export async function GET(req: NextRequest, props: VoteParams) {
+  const params = await props.params;
   try {
     await verifyRoleRequired(AccountRole.SUPPORT, req);
 
@@ -165,7 +166,8 @@ export async function GET(req: NextRequest, { params }: VoteParams) {
  *                   type: string
  *                   example: Internal server error
  */
-export async function POST(req: NextRequest, { params }: VoteParams) {
+export async function POST(req: NextRequest, props: VoteParams) {
+  const params = await props.params;
   try {
     await verifyRoleRequired(AccountRole.SUPPORT, req);
 

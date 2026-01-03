@@ -3,10 +3,10 @@ import prisma from "@/lib/prisma";
 import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 interface UserBlacklistProofParams {
-  params: {
+  params: Promise<{
     blacklistId: string;
     proofId: string;
-  };
+  }>;
 }
 
 /**
@@ -63,7 +63,8 @@ interface UserBlacklistProofParams {
  *                   type: string
  *                   example: Error while fetching proof
  */
-export async function GET(req: NextRequest, { params }: UserBlacklistProofParams) {
+export async function GET(req: NextRequest, props: UserBlacklistProofParams) {
+  const params = await props.params;
   const { blacklistId, proofId } = params;
   const proof = await prisma.proof.findUnique({
     where: {
@@ -164,7 +165,8 @@ export async function GET(req: NextRequest, { params }: UserBlacklistProofParams
  *                   type: string
  *                   example: Error while updating proof
  */
-export async function PUT(req: NextRequest, { params }: UserBlacklistProofParams) {
+export async function PUT(req: NextRequest, props: UserBlacklistProofParams) {
+  const params = await props.params;
   try {
     const { proofId } = params;
 

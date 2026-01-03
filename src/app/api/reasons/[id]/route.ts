@@ -4,9 +4,9 @@ import { AccountRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface DeleteReasonRequest {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -55,7 +55,8 @@ interface DeleteReasonRequest {
  *                   type: string
  *                   example: Internal server error
  */
-export async function DELETE(request: NextRequest, { params }: DeleteReasonRequest) {
+export async function DELETE(request: NextRequest, props: DeleteReasonRequest) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, request);
     await prisma.reason.delete({

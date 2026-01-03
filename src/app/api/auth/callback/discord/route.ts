@@ -47,7 +47,7 @@ import { createAccountIfNotExist, generateJWT } from "./discord-helper";
  *                 error:
  *                   type: string
  */
-export const GET = async (req: NextRequest, res: NextResponse) => {
+export const GET = async (req: NextRequest) => {
   const code = req.nextUrl.searchParams.get("code");
 
   if (!code || Array.isArray(code)) {

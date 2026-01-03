@@ -4,9 +4,9 @@ import { Blacklist, BlacklistStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UserUserIdStatusParams {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
 const getStatus = (activeBlacklists: Blacklist[], hasOldBlacklists: boolean) => {
@@ -59,7 +59,8 @@ const getStatus = (activeBlacklists: Blacklist[], hasOldBlacklists: boolean) => 
  *                   type: string
  *                   example: User not found
  */
-export async function GET(req: NextRequest, { params }: UserUserIdStatusParams) {
+export async function GET(req: NextRequest, props: UserUserIdStatusParams) {
+  const params = await props.params;
   const user = await prisma.user.findUnique({
     where: {
       id: params.userId,

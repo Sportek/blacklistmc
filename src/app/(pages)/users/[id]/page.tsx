@@ -23,11 +23,12 @@ const getPreventionMessage = (status: UserStatus) => {
 };
 
 interface UserPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
-const UserPage = async ({ params }: UserPageProps) => {
+const UserPage = async (props: UserPageProps) => {
+  const params = await props.params;
   const user = await prisma.user.findUnique({
     where: {
       id: params.id,

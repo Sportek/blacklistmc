@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateBlacklistSchema } from "../../users/[userId]/blacklists/blacklistSchema";
 
 interface UsersUserIdBlacklistsBlacklistIdParams {
-  params: {
+  params: Promise<{
     blacklistId: string;
-  };
+  }>;
 }
 
 /**
@@ -50,7 +50,8 @@ interface UsersUserIdBlacklistsBlacklistIdParams {
  *                 error:
  *                   type: string
  */
-export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
+export async function GET(req: NextRequest, props: UsersUserIdBlacklistsBlacklistIdParams) {
+  const params = await props.params;
   const blacklist = await prisma.blacklist.findUnique({ where: { id: Number(params.blacklistId) } });
   if (!blacklist) {
     return Response.json({ error: "Blacklist not found" }, { status: 404 });
@@ -94,7 +95,8 @@ export async function GET(req: NextRequest, { params }: UsersUserIdBlacklistsBla
  *                 error:
  *                   type: string
  */
-export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
+export async function DELETE(req: NextRequest, props: UsersUserIdBlacklistsBlacklistIdParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
     if (!params.blacklistId) {
@@ -196,7 +198,8 @@ export async function DELETE(req: NextRequest, { params }: UsersUserIdBlacklists
  *                 error:
  *                   type: string
  */
-export async function PATCH(req: NextRequest, { params }: UsersUserIdBlacklistsBlacklistIdParams) {
+export async function PATCH(req: NextRequest, props: UsersUserIdBlacklistsBlacklistIdParams) {
+  const params = await props.params;
   try {
     verifyRoleRequired(AccountRole.ADMIN, req);
     const { title, description, askedByUserId, expireAt, channelId, status, reasonId } = await req.json();
