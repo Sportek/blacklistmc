@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { Blacklist } from "@prisma/client";
+import { Blacklist } from "@/prisma/generated/prisma/browser";
 import { useRouter } from "next/navigation";
 
 const DeleteBlacklist = ({ blacklist }: { blacklist: Blacklist }) => {

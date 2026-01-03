@@ -1,7 +1,7 @@
 import DashboardPagination from "@/components/panel/users/paginate";
 import UserCard from "@/components/panel/users/user-card";
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
+import { User } from "@/prisma/generated/prisma/client";
 
 interface UsersProps {
   searchParams: Promise<{

@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { uploadFileToAzure } from "@/utils/file-upload-manager";
-import { ProofType } from "@prisma/client";
+import { ProofType } from "@/prisma/generated/prisma/client";
 import { NextRequest } from "next/server";
 import path from "path";
 

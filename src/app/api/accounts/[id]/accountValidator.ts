@@ -1,4 +1,4 @@
-import { AccountRole } from "@prisma/client";
+import { AccountRole } from "@/prisma/generated/prisma/client";
 import { z } from "zod";
 
 const updateAccountValidator = z.object({

@@ -3,7 +3,7 @@ import Card from "@/components/landing/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { Reason } from "@prisma/client";
+import { Reason } from "@/prisma/generated/prisma/browser";
 import { useState } from "react";
 
 interface ReasonComponentProps {

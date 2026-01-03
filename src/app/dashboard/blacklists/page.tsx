@@ -2,7 +2,7 @@ import BlacklistCard from "@/components/panel/blacklists";
 import DashboardPagination from "@/components/panel/users/paginate";
 import { formatSessionCookie } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { Blacklist, Reason, User } from "@prisma/client";
+import { Blacklist, Reason, User } from "@/prisma/generated/prisma/client";
 import { cookies } from "next/headers";
 
 interface DashboardBlacklistProps {

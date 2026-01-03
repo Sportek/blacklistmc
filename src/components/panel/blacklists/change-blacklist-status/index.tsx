@@ -1,6 +1,6 @@
 "use client";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Blacklist, BlacklistStatus } from "@prisma/client";
+import { Blacklist, BlacklistStatus } from "@/prisma/generated/prisma/browser";
 import { blacklistStatusBadge } from "..";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";

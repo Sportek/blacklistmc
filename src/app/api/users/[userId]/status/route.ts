@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
-import { Blacklist, BlacklistStatus } from "@prisma/client";
+import { Blacklist, BlacklistStatus } from "@/prisma/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UserUserIdStatusParams {

@@ -11,7 +11,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import RoleBadge from "@/components/user/role-badge";
 import { useAuth } from "@/contexts/useAuth";
-import { Account, AccountRole, User } from "@prisma/client";
+import { Account, AccountRole, User } from "@/prisma/generated/prisma/browser";
 
 interface UserCardProps {
   user: User;

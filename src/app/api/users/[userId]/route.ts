@@ -1,7 +1,7 @@
 import { updateOrCreateUserInfo } from "@/http/discord-requests";
 import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { AccountRole } from "@prisma/client";
+import { AccountRole } from "@/prisma/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface UsersIdParams {

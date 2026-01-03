@@ -1,5 +1,5 @@
 "use client";
-import { Account, User } from "@prisma/client";
+import { Account, User } from "@/prisma/generated/prisma/browser";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 

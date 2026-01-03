@@ -27,6 +27,9 @@
       ],
       "@/public/*": [
         "./public/*"
+      ],
+      "@/prisma/*": [
+        "./prisma/*"
       ]
     },
     "typeRoots": [

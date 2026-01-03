@@ -1,5 +1,5 @@
 import { ArrowLongRightIcon, ShieldCheckIcon, ShieldExclamationIcon } from "@heroicons/react/24/solid";
-import { Blacklist, Reason, User } from "@prisma/client";
+import { Blacklist, Reason, User } from "@/prisma/generated/prisma/client";
 import Link from "next/link";
 import Badge from "../landing/badge";
 import Card from "../landing/card";

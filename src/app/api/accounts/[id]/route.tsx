@@ -1,6 +1,6 @@
 import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { AccountRole } from "@prisma/client";
+import { AccountRole } from "@/prisma/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { updateAccountValidator } from "./accountValidator";
 

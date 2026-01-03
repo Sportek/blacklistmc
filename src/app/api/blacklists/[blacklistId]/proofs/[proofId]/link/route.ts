@@ -1,7 +1,7 @@
 import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
 import { getTemporaryBlobUrlWithSasToken } from "@/utils/file-upload-manager";
-import { AccountRole } from "@prisma/client";
+import { AccountRole } from "@/prisma/generated/prisma/client";
 import { NextRequest } from "next/server";
 
 interface LinkRequestParams {

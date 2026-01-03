@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import StatusBadge from "@/components/user/status-badge";
-import { User } from "@prisma/client";
+import { User } from "@/prisma/generated/prisma/client";
 
 interface UserProps {
   user: User;

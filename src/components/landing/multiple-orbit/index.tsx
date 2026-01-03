@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "@prisma/client";
+import { User } from "@/prisma/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import Orbit from "../orbit";

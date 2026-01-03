@@ -1,4 +1,4 @@
-import { ProofType } from "@prisma/client";
+import { ProofType } from "@/prisma/generated/prisma/client";
 import { z } from "zod";
 
 const proofTypeValues = Object.values(ProofType) as [string, ...string[]];

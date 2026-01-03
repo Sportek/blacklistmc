@@ -1,4 +1,4 @@
-import { BlacklistStatus } from "@prisma/client";
+import { BlacklistStatus } from "@/prisma/generated/prisma/client";
 import { z } from "zod";
 
 export const searchParamsSchema = z.object({

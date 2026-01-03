@@ -6,7 +6,7 @@ import { toast } from "@/components/ui/use-toast";
 import fetcher from "@/lib/fetcher";
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
-import { Proof } from "@prisma/client";
+import { Proof } from "@/prisma/generated/prisma/browser";
 import Image from "next/image";
 import useSWR from "swr";
 

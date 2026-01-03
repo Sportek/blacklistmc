@@ -3,7 +3,7 @@ import Card from "@/components/landing/card";
 import { Input } from "@/components/ui/input";
 import useDebounce from "@/hooks/useDebounce";
 import { ArrowPathIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { User } from "@prisma/client";
+import { User } from "@/prisma/generated/prisma/browser";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";

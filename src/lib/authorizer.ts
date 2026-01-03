@@ -1,4 +1,4 @@
-import { AccountRole } from "@prisma/client";
+import { AccountRole } from "@/prisma/generated/prisma/client";
 import jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
 import prisma from "./prisma";

@@ -1,7 +1,7 @@
 import Badge from "@/components/landing/badge";
 import Card from "@/components/landing/card";
 import { CheckIcon, ClockIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Blacklist, BlacklistStatus, Reason, User } from "@prisma/client";
+import { Blacklist, BlacklistStatus, Reason, User } from "@/prisma/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 

@@ -1,6 +1,6 @@
 import { getSession, hasAtLeastRole } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { AccountRole, Blacklist, BlacklistStatus } from "@prisma/client";
+import { AccountRole, Blacklist, BlacklistStatus } from "@/prisma/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { searchParamsSchema } from "./blacklistSearchParamsValidator";
 

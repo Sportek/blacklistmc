@@ -6,7 +6,7 @@ import UserCard from "@/components/landing/user";
 import StatusBadge from "@/components/user/status-badge";
 import prisma from "@/lib/prisma";
 import { UserStatus } from "@/types/types";
-import { BlacklistStatus, User } from "@prisma/client";
+import { BlacklistStatus, User } from "@/prisma/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";

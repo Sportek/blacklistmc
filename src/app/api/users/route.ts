@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateOrCreateUserInfo } from "@/http/discord-requests";
 import { AuthorizationError, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { AccountRole, User } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { AccountRole, User } from "@/prisma/generated/prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { ZodError } from "zod";
 import { userSchema } from "./userSchema";
 
@@ -56,9 +56,9 @@ import { userSchema } from "./userSchema";
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const limit = parseInt(searchParams.get("limit") ?? "10");
+  const limit = Number.parseInt(searchParams.get("limit") ?? "10");
   const random = searchParams.get("random") === "true";
-  const page = parseInt(searchParams.get("page") ?? "1");
+  const page = Number.parseInt(searchParams.get("page") ?? "1");
   const search = searchParams.get("search") ?? "";
 
   const skip = (page - 1) * limit;

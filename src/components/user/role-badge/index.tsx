@@ -7,7 +7,7 @@ import {
   WrenchIcon,
   WrenchScrewdriverIcon,
 } from "@heroicons/react/24/solid";
-import { AccountRole } from "@prisma/client";
+import { AccountRole } from "@/prisma/generated/prisma/browser";
 
 const roleBadgeMap = {
   [AccountRole.ADMIN]: {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { ArrowPathIcon, FlagIcon } from "@heroicons/react/24/solid";
-import { Reason } from "@prisma/client";
+import { Reason } from "@/prisma/generated/prisma/browser";
 import { useRef, useState } from "react";
 
 interface AddReasonProps {

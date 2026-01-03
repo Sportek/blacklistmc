@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { BlacklistStatus, BlacklistVoteState } from "@prisma/client";
+import { BlacklistStatus, BlacklistVoteState } from "@/prisma/generated/prisma/client";
 import { z } from "zod";
 
 export const createBlacklistSchema = z.object({

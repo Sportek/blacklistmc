@@ -1,6 +1,6 @@
 import { AuthorizationError, hasAtLeastRole, verifyRoleRequired } from "@/lib/authorizer";
 import prisma from "@/lib/prisma";
-import { AccountRole, BlacklistStatus, BlacklistVoteState } from "@prisma/client";
+import { AccountRole, BlacklistStatus, BlacklistVoteState } from "@/prisma/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface VoteParams {

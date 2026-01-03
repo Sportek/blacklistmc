@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import AddReason from "@/components/panel/reasons/add-reason";
 import ReasonComponent from "@/components/panel/reasons/reason";
-import { Reason } from "@prisma/client";
+import { Reason } from "@/prisma/generated/prisma/browser";
 
 const ReasonsPage = () => {
   const [reasons, setReasons] = useState<Reason[]>([]);

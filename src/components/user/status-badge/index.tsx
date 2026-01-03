@@ -3,7 +3,7 @@ import Badge from "@/components/landing/badge";
 import fetcher from "@/lib/fetcher";
 import { UserStatus } from "@/types/types";
 import { ArrowPathIcon, ShieldCheckIcon, ShieldExclamationIcon } from "@heroicons/react/24/solid";
-import { User } from "@prisma/client";
+import { User } from "@/prisma/generated/prisma/browser";
 import useSWR from "swr";
 
 const getStatusBadge = (status: UserStatus) => {
