@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "@/prisma/generated/prisma/client";
+import prisma from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import Orbit from "../orbit";
@@ -17,10 +17,13 @@ const MultipleOrbit = async ({ className }: MultipleOrbitProps) => {
   const secondLine = generateRandomNumber(2, 8);
   const thirdLine = generateRandomNumber(3, 6);
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/users?limit=${firstLine + secondLine + thirdLine}&random=true`
-  );
-  const users = (await response.json()) as User[];
+  // Fetch random users directly from Prisma
+  const totalUsers = await prisma.user.count();
+  const randomSkip = Math.max(0, Math.floor(Math.random() * (totalUsers - (firstLine + secondLine + thirdLine))));
+  const users = await prisma.user.findMany({
+    take: firstLine + secondLine + thirdLine,
+    skip: randomSkip,
+  });
 
   return (
     <div className={className}>

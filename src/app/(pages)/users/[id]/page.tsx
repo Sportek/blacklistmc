@@ -61,8 +61,20 @@ const UserPage = async (props: UserPageProps) => {
 
   if (!user) notFound();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}/status`);
-  const userStatusJson = (await response.json()) as { status: UserStatus };
+  // Calculate user status directly
+  const activeBlacklists = user.Blacklist.filter((blacklist) => {
+    return !blacklist.expireAt || blacklist.expireAt > new Date();
+  });
+  const hasOldBlacklists = user.Blacklist.length > 0 && activeBlacklists.length === 0;
+
+  let userStatus: UserStatus;
+  if (activeBlacklists.length > 0) {
+    userStatus = UserStatus.BLACKLISTED;
+  } else if (hasOldBlacklists) {
+    userStatus = UserStatus.OLD_BLACKLISTED;
+  } else {
+    userStatus = UserStatus.NOT_BLACKLISTED;
+  }
   return (
     <>
       <div className="absolute inset-0 z-0 max-h-[100vh] top-[-200px] overflow-x-clip">
@@ -76,7 +88,7 @@ const UserPage = async (props: UserPageProps) => {
             <div className="text-2xl font-normal">@{user.username}</div>
             <StatusBadge user={user} />
           </div>
-          {getPreventionMessage(userStatusJson.status)}
+          {getPreventionMessage(userStatus)}
         </div>
         <div className="flex flex-col md:flex-row gap-10 w-full">
           {(user.UserHistory || []).length > 0 ? (

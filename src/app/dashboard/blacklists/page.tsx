@@ -23,7 +23,6 @@ const DashboardBlacklist = async (props: DashboardBlacklistProps) => {
 
   console.log("Cookies trouvés", formatSessionCookie(await cookies()));
 
-
   const response = await fetch(url, {
     headers: {
       Cookie: formatSessionCookie(await cookies()),
@@ -32,7 +31,7 @@ const DashboardBlacklist = async (props: DashboardBlacklistProps) => {
   });
   if (!response.ok) return null;
   const blacklists: (Blacklist & { user: User; reason: Reason })[] = await response.json();
-  const maxPage = Math.ceil(blacklistAmount / parseInt(nElement));
+  const maxPage = Math.ceil(blacklistAmount / Number.parseInt(nElement));
 
   return (
     <div className="w-full flex flex-col gap-2 items-center overflow-y-auto h-screen pt-8 px-2">

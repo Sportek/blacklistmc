@@ -1,7 +1,6 @@
 import DashboardPagination from "@/components/panel/users/paginate";
 import UserCard from "@/components/panel/users/user-card";
 import prisma from "@/lib/prisma";
-import { User } from "@/prisma/generated/prisma/client";
 
 interface UsersProps {
   searchParams: Promise<{
@@ -18,14 +17,20 @@ const Users = async (props: UsersProps) => {
 
   const userAmount = await prisma.user.count();
 
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/users?page=${page}&search=${search}&limit=${nElement}`;
-  const response = await fetch(url, {
-    cache: "no-store",
+  const users = await prisma.user.findMany({
+    where: search
+      ? {
+          OR: [
+            { username: { contains: search, mode: "insensitive" } },
+            { displayName: { contains: search, mode: "insensitive" } },
+            { id: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
+    skip: (parseInt(page) - 1) * parseInt(nElement),
+    take: parseInt(nElement),
+    orderBy: { createdAt: "desc" },
   });
-
-  if (!response.ok) return null;
-
-  const users: User[] = await response.json();
 
   const accounts = await prisma.account.findMany();
 
